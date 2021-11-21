@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="yougar">
+  <meta name="keywords" content="">
+  <meta name="description" content="TacticalArmed函数sub_401160反调试，通过清空Dr7寄存器反调试。直接nop掉调用反调试的地方即可bypass。  接下来main函数先申请一段执行内存，然后对内存进行修改，最后添加ret指令返回。  通过调试，查看这一块执行的指令内容  经过分析，发现这一块指令执行的处理流程正是tea加密算法，其中四个密钥地址是405000到40500C，dump下来是[0x7CE45630">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2021西湖论剑两道逆向题目WP">
+<meta property="og:url" content="http://yougar0.github.io/2021/11/21/%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B8%A4%E9%81%93%E9%80%86%E5%90%91%E9%A2%98%E7%9B%AEWP/index.html">
+<meta property="og:site_name" content="go hacking">
+<meta property="og:description" content="TacticalArmed函数sub_401160反调试，通过清空Dr7寄存器反调试。直接nop掉调用反调试的地方即可bypass。  接下来main函数先申请一段执行内存，然后对内存进行修改，最后添加ret指令返回。  通过调试，查看这一块执行的指令内容  经过分析，发现这一块指令执行的处理流程正是tea加密算法，其中四个密钥地址是405000到40500C，dump下来是[0x7CE45630">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-87.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-88.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-89.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-90.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-91.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-92.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-93.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-94.png">
+<meta property="article:published_time" content="2021-11-20T23:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-20T23:54:46.075Z">
+<meta property="article:author" content="yougar">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://yougar0.github.io/images/pasted-87.png">
+  
+  <title>2021西湖论剑两道逆向题目WP - go hacking</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/ir-black.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yougar0.github.io","root":"/","version":"1.8.12","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname"}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Go Hacking</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="2021西湖论剑两道逆向题目WP">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-11-21 07:00" pubdate>
+        2021年11月21日 早上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.5k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      8 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">2021西湖论剑两道逆向题目WP</h1>
+            
+            <div class="markdown-body">
+              <h2 id="TacticalArmed"><a href="#TacticalArmed" class="headerlink" title="TacticalArmed"></a>TacticalArmed</h2><p>函数sub_401160反调试，通过清空Dr7寄存器反调试。直接nop掉调用反调试的地方即可bypass。</p>
+<p><img src="/images/pasted-87.png" srcset="/img/loading.gif" lazyload alt="反调试部分"></p>
+<p>接下来main函数先申请一段执行内存，然后对内存进行修改，最后添加ret指令返回。</p>
+<p><img src="/images/pasted-88.png" srcset="/img/loading.gif" lazyload alt="申请shellcode执行的内存"></p>
+<p>通过调试，查看这一块执行的指令内容</p>
+<p><img src="/images/pasted-89.png" srcset="/img/loading.gif" lazyload alt="执行的shellcode内容"></p>
+<p>经过分析，发现这一块指令执行的处理流程正是tea加密算法，其中四个密钥地址是405000到40500C，dump下来是[0x7CE45630, 0x58334908, 0x66398867, 0xC35195B1]。魔数是2 ** 32 - 0x7E5A96D2 = 0x81a5692e。结合代码，轮数是33。由于加密一次之后，没有对dword ptr ds:[405748]置0，因此在解密的时候，后面的数据都要累加前面的最终值。<br>解密代码：</p>
+<p><img src="/images/pasted-90.png" srcset="/img/loading.gif" lazyload alt="tea解密算法代码"></p>
+<p>运行结果：</p>
+<p><img src="/images/pasted-91.png" srcset="/img/loading.gif" lazyload alt="运行得到flag"></p>
+<p>附代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-keyword">from</span> ctypes <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">import</span> struct<br><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">decrypt</span>(<span class="hljs-params">v, k, num</span>):</span><br>    v0, v1 = c_uint32(v[<span class="hljs-number">0</span>]), c_uint32(v[<span class="hljs-number">1</span>])<br>    delta = <span class="hljs-number">0x81a5692e</span> <br>    k0, k1, k2, k3 = k[<span class="hljs-number">0</span>], k[<span class="hljs-number">1</span>], k[<span class="hljs-number">2</span>], k[<span class="hljs-number">3</span>]<br><br>    total = c_uint32(delta * <span class="hljs-number">33</span> * num)<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">33</span>):                       <br>        v1.value -= ((v0.value&lt;&lt;<span class="hljs-number">4</span>) + k2) ^ (v0.value + total.value) ^ ((v0.value&gt;&gt;<span class="hljs-number">5</span>) + k3) <br>        v0.value -= ((v1.value&lt;&lt;<span class="hljs-number">4</span>) + k0) ^ (v1.value + total.value) ^ ((v1.value&gt;&gt;<span class="hljs-number">5</span>) + k1)  <br>        total.value -= delta<br><br>    <span class="hljs-keyword">return</span> v0.value, v1.value   <br>  <br><br><span class="hljs-comment"># test</span><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:<br>    <span class="hljs-comment"># ```</span><br>    <span class="hljs-comment"># 422F1DED 1485E472 035578D5 BF6B80A2  </span><br>    <span class="hljs-comment"># 97D77245 2DAE75D1 665FA963 292E6D74  </span><br>    <span class="hljs-comment"># 9795FCC1 0BB5C8E9 FFFFFFFF 00000001  </span><br>    <span class="hljs-comment"># ```</span><br>    <span class="hljs-comment"># 待加密的明文，两个32位整型，即64bit的明文数据</span><br>    value = [<span class="hljs-number">0x422F1DED</span>, <span class="hljs-number">0x1485E472</span>, <span class="hljs-number">0x35578D5</span>, <span class="hljs-number">0xBF6B80A2</span>, <span class="hljs-number">0x97D77245</span>, <span class="hljs-number">0x2DAE75D1</span>, <span class="hljs-number">0x665FA963</span>, <span class="hljs-number">0x292E6D74</span>, <span class="hljs-number">0x9795FCC1</span>, <span class="hljs-number">0x0BB5C8E9</span>]<br>    <span class="hljs-comment"># 四个key，每个是32bit，即密钥长度为128bit</span><br>    key = [<span class="hljs-number">0x7CE45630</span>, <span class="hljs-number">0x58334908</span>, <span class="hljs-number">0x66398867</span>, <span class="hljs-number">0xC35195B1</span>]<br>    <span class="hljs-comment"># print(&quot;Data is : &quot;, hex(value[0]), hex(value[1]))  </span><br>    <span class="hljs-comment"># res = encrypt(value, key)</span><br>    <span class="hljs-comment"># print(&quot;Encrypted data is : &quot;, hex(res[0]), hex(res[1]))</span><br>    flag = <span class="hljs-string">b&#x27;DASCTF&#123;&#x27;</span><br>    res = decrypt(value[<span class="hljs-number">0</span>:<span class="hljs-number">2</span>], key, <span class="hljs-number">1</span>)<br>    flag += struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">0</span>]) + struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">1</span>])<br>    res = decrypt(value[<span class="hljs-number">2</span>:<span class="hljs-number">4</span>], key, <span class="hljs-number">2</span>)<br>    flag += struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">0</span>]) + struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">1</span>])<br>    res = decrypt(value[<span class="hljs-number">4</span>:<span class="hljs-number">6</span>], key, <span class="hljs-number">3</span>)<br>    flag += struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">0</span>]) + struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">1</span>])<br>    res = decrypt(value[<span class="hljs-number">6</span>:<span class="hljs-number">8</span>], key, <span class="hljs-number">4</span>)<br>    flag += struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">0</span>]) + struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">1</span>])<br>    res = decrypt(value[<span class="hljs-number">8</span>:<span class="hljs-number">10</span>], key, <span class="hljs-number">5</span>)<br>    flag += struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">0</span>]) + struct.pack(<span class="hljs-string">&#x27;&lt;I&#x27;</span>, res[<span class="hljs-number">1</span>])<br>    flag += <span class="hljs-string">b&#x27;&#125;&#x27;</span><br>    <span class="hljs-built_in">print</span>(flag)<br></code></pre></div></td></tr></table></figure>
+
+<h2 id="ROR"><a href="#ROR" class="headerlink" title="ROR"></a>ROR</h2><p>查看程序发现是个编码表编码算法，通过编码表逆运算，数组下标转换为二进制格式，爆破偏移为0，再组合二进制数据转为字符</p>
+<p><img src="/images/pasted-92.png" srcset="/img/loading.gif" lazyload alt="IDA截图"></p>
+<p>解题代码：</p>
+<p><img src="/images/pasted-93.png" srcset="/img/loading.gif" lazyload alt="解题代码截图"></p>
+<p>运行结果：</p>
+<p><img src="/images/pasted-94.png" srcset="/img/loading.gif" lazyload alt="运行得到flag"></p>
+<p>附代码:</p>
+<figure class="highlight python"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_flag_bytes</span>(<span class="hljs-params">nums</span>):</span><br>    num_bins = [<span class="hljs-built_in">bin</span>(i)[<span class="hljs-number">2</span>:].rjust(<span class="hljs-number">8</span>, <span class="hljs-string">&#x27;0&#x27;</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> nums]<br>    flag_num_b = [[<span class="hljs-string">&#x27;0&#x27;</span> <span class="hljs-keyword">for</span> l <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>)] <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>)]<br>    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>):<br>        <span class="hljs-keyword">for</span> l <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>):<br>            flag_num_b[l][i] = num_bins[i][l]<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">bytes</span>([<span class="hljs-built_in">int</span>(<span class="hljs-string">&#x27;&#x27;</span>.join(flag_num_b[i]),<span class="hljs-number">2</span>) <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">8</span>)])<br><br><br>flag_num = [<span class="hljs-number">0</span>, <span class="hljs-number">181</span>, <span class="hljs-number">122</span>, <span class="hljs-number">206</span>, <span class="hljs-number">37</span>, <span class="hljs-number">108</span>, <span class="hljs-number">7</span>, <span class="hljs-number">223</span>, <span class="hljs-number">0</span>, <span class="hljs-number">251</span>, <span class="hljs-number">124</span>, <span class="hljs-number">38</span>, <span class="hljs-number">75</span>, <span class="hljs-number">62</span>, <span class="hljs-number">134</span>, <span class="hljs-number">154</span>, <span class="hljs-number">0</span>, <span class="hljs-number">255</span>, <span class="hljs-number">37</span>, <span class="hljs-number">144</span>, <span class="hljs-number">255</span>, <span class="hljs-number">28</span>, <span class="hljs-number">56</span>, <span class="hljs-number">176</span>, <span class="hljs-number">0</span>, <span class="hljs-number">231</span>, <span class="hljs-number">60</span>, <span class="hljs-number">121</span>, <span class="hljs-number">225</span>, <span class="hljs-number">144</span>, <span class="hljs-number">251</span>, <span class="hljs-number">30</span>, <span class="hljs-number">0</span>, <span class="hljs-number">204</span>, <span class="hljs-number">179</span>, <span class="hljs-number">51</span>, <span class="hljs-number">78</span>, <span class="hljs-number">145</span>, <span class="hljs-number">65</span>, <span class="hljs-number">222</span>]<br><br>flag = <span class="hljs-string">b&#x27;&#x27;</span><br><br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">5</span>):<br>    flag += get_flag_bytes(flag_num[<span class="hljs-number">8</span>*i:(i+<span class="hljs-number">1</span>)*<span class="hljs-number">8</span>])<br><br><span class="hljs-built_in">print</span>(flag)<br></code></pre></div></td></tr></table></figure>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/19/IDA%E6%8F%92%E4%BB%B6JNI-Helper%E9%80%82%E9%85%8D/">
+                        <span class="hidden-mobile">IDA插件JNI-Helper适配</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js" ></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"default"});
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

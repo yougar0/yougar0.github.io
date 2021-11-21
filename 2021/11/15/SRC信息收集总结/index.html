@@ -1,0 +1,503 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="yougar">
+  <meta name="keywords" content="">
+  <meta name="description" content="前言信息收集是渗透测试当中最重要的环节，在SRC漏洞挖掘过程中，挖掘的漏洞的多少很大程度上取决于信息收集是否全面。SRC信息收集一般从5个方面入手，分别是公司架构、子域名、C段、APP和小程序以及PC客户端和微信公众号、文档源码账号。 实践公司架构公司架构可以通过爱查查、企查查、天眼查这些企业关系图谱网站获得。以唯品会举例，通过爱企查等公司架构网站，查询得到唯品会的子公司、APP、公众号、微博等相">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SRC信息收集总结">
+<meta property="og:url" content="http://yougar0.github.io/2021/11/15/SRC%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%80%BB%E7%BB%93/index.html">
+<meta property="og:site_name" content="go hacking">
+<meta property="og:description" content="前言信息收集是渗透测试当中最重要的环节，在SRC漏洞挖掘过程中，挖掘的漏洞的多少很大程度上取决于信息收集是否全面。SRC信息收集一般从5个方面入手，分别是公司架构、子域名、C段、APP和小程序以及PC客户端和微信公众号、文档源码账号。 实践公司架构公司架构可以通过爱查查、企查查、天眼查这些企业关系图谱网站获得。以唯品会举例，通过爱企查等公司架构网站，查询得到唯品会的子公司、APP、公众号、微博等相">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-66.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-67.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-68.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-69.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-70.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-71.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-72.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-73.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-74.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-75.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-78.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-76.png">
+<meta property="og:image" content="http://yougar0.github.io/images/pasted-77.png">
+<meta property="article:published_time" content="2021-11-15T11:05:00.000Z">
+<meta property="article:modified_time" content="2021-11-18T12:31:19.330Z">
+<meta property="article:author" content="yougar">
+<meta property="article:tag" content="渗透测试">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://yougar0.github.io/images/pasted-66.png">
+  
+  <title>SRC信息收集总结 - go hacking</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/ir-black.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yougar0.github.io","root":"/","version":"1.8.12","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname"}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Go Hacking</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="SRC信息收集总结">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-11-15 19:05" pubdate>
+        2021年11月15日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.5k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      5 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">SRC信息收集总结</h1>
+            
+            <div class="markdown-body">
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>信息收集是渗透测试当中最重要的环节，在SRC漏洞挖掘过程中，挖掘的漏洞的多少很大程度上取决于信息收集是否全面。SRC信息收集一般从5个方面入手，分别是公司架构、子域名、C段、APP和小程序以及PC客户端和微信公众号、文档源码账号。</p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><h3 id="公司架构"><a href="#公司架构" class="headerlink" title="公司架构"></a>公司架构</h3><p>公司架构可以通过<code>爱查查、企查查、天眼查</code>这些企业关系图谱网站获得。以唯品会举例，通过爱企查等公司架构网站，查询得到唯品会的子公司、APP、公众号、微博等相关信息，对这些信息进行梳理，得到一部分数据。</p>
+<p><img src="/images/pasted-66.png" srcset="/img/loading.gif" lazyload alt="子公司查询结构"></p>
+<p><img src="/images/pasted-67.png" srcset="/img/loading.gif" lazyload alt="微博信息"></p>
+<p><img src="/images/pasted-68.png" srcset="/img/loading.gif" lazyload alt="微信公众号信息"></p>
+<p><img src="/images/pasted-69.png" srcset="/img/loading.gif" lazyload alt="APP信息"></p>
+<p>使用狼组开源的EnScan自动化查询公司架构</p>
+<p><img src="/images/pasted-70.png" srcset="/img/loading.gif" lazyload alt="狼组ENScan"></p>
+<p><img src="/images/pasted-71.png" srcset="/img/loading.gif" lazyload alt="ENScan结果1"></p>
+<p><img src="/images/pasted-72.png" srcset="/img/loading.gif" lazyload alt="ENScan结果2"></p>
+<p>通过工具，可以获取7个种分类的信息。</p>
+<p>对获得的对外投资子公司进行批量查询，获得更多关于子公司的信息。</p>
+<h3 id="子域名"><a href="#子域名" class="headerlink" title="子域名"></a>子域名</h3><p>子域名收集可以通过以下几方面来进行。</p>
+<ul>
+<li>证书</li>
+<li>网页爬虫</li>
+<li>DNS数据集服务接口</li>
+<li>子域名爆破</li>
+<li>威胁情报平台</li>
+<li>搜索引擎搜索语法</li>
+</ul>
+<p>这里我采用两款工具进行收集，分别是OneForAll和JSINFO-SCAN。</p>
+<ul>
+<li>OneForAll: <a target="_blank" rel="noopener" href="https://github.com/shmilylty/OneForAll">https://github.com/shmilylty/OneForAll</a></li>
+<li>JSINFO-SCAN: <a target="_blank" rel="noopener" href="https://github.com/p1g3/JSINFO-SCAN">https://github.com/p1g3/JSINFO-SCAN</a></li>
+</ul>
+<p>通过JSINFO-SCAN扫描爬取子域名和URL链接</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">python3 jsinfo.py --target vip_domain.txt --keywords pinnuobaoxian,vpalstatic,ebatong,vpal,vipsfin,vip,weipinfin<br></code></pre></div></td></tr></table></figure>
+
+
+<p><img src="/images/pasted-73.png" srcset="/img/loading.gif" lazyload alt="JSINFO-SCAN扫描"></p>
+<p>通过OneForAll获取子域名</p>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">python3 oneforall.py --targets ../JSINFO-SCAN/vip_domain.txt  run<br></code></pre></div></td></tr></table></figure>
+<p><img src="/images/pasted-74.png" srcset="/img/loading.gif" lazyload alt="OneForAll"></p>
+<p>结合两个工具得到的子域名结果进行去重处理，剩下的就是发现的所有子域名。</p>
+<h3 id="C段"><a href="#C段" class="headerlink" title="C段"></a>C段</h3><p>子域名去重结果</p>
+<p><img src="/images/pasted-75.png" srcset="/img/loading.gif" lazyload alt="去重后子域名"></p>
+<p>对去重后的子域名进行泛解析检测、CDN检测以及C段提取，再调用FOFA API获取C段的所有开放的主机IP和端口。最后利用系统指纹、服务指纹探测工具探测端口的服务信息。</p>
+<h3 id="APP、小程序、微信公众号、PC客户端"><a href="#APP、小程序、微信公众号、PC客户端" class="headerlink" title="APP、小程序、微信公众号、PC客户端"></a>APP、小程序、微信公众号、PC客户端</h3><p>在线查询网站</p>
+<ul>
+<li>小蓝本 <a target="_blank" rel="noopener" href="https://www.xiaolanben.com/">https://www.xiaolanben.com/</a></li>
+<li>爱企查</li>
+<li>极致了 <a target="_blank" rel="noopener" href="https://www.jzl.com/">https://www.jzl.com/</a></li>
+<li>西瓜数据 <a target="_blank" rel="noopener" href="http://data.xiguaji.com/">http://data.xiguaji.com/</a></li>
+</ul>
+<p><img src="/images/pasted-78.png" srcset="/img/loading.gif" lazyload alt="小蓝本搜索"></p>
+<p>微信直接搜索</p>
+<p><img src="/images/pasted-76.png" srcset="/img/loading.gif" lazyload alt="微信搜公众号"></p>
+<p><img src="/images/pasted-77.png" srcset="/img/loading.gif" lazyload alt="微信搜小程序"></p>
+<h3 id="文档源码账号"><a href="#文档源码账号" class="headerlink" title="文档源码账号"></a>文档源码账号</h3><p>百度文库、文档、网盘敏感信息使用在线文档搜索网站，这里我用凌风云。</p>
+<p>泄露源码可以从百度网盘、github、gitee搜索，github可以参考GSIL工具的API搜索语法，做到定时监控，自动搜索。gitee搜索使用google搜索语法进行，原因是gitee的站内搜索引擎实在是拉跨。</p>
+<p>凭证泄露可以从github和gitee中搜索，也可以利用搜索引擎语法从互联网直接搜索。比如：</p>
+<ul>
+<li>site:vip.com intext:”忘记密码”</li>
+<li>site:vip.com intext:”工号”</li>
+<li>site:vip.com intext:”优秀员工”</li>
+<li>site:vip.com intext:”xxx号码”</li>
+<li>site:vip.com intext:”手机号”</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://wiki.wgpsec.org/knowledge/hw/border-info.html">https://wiki.wgpsec.org/knowledge/hw/border-info.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.hui-blog.cool/posts/21385.html">https://www.hui-blog.cool/posts/21385.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.hui-blog.cool/posts/15287.html">https://www.hui-blog.cool/posts/15287.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/wgpsec/ENScan">https://github.com/wgpsec/ENScan</a></li>
+<li><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/10418">https://xz.aliyun.com/t/10418</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/FeeiCN/GSIL/wiki">https://github.com/FeeiCN/GSIL/wiki</a></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/19/IDA%E6%8F%92%E4%BB%B6JNI-Helper%E9%80%82%E9%85%8D/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">IDA插件JNI-Helper适配</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/11/05/WebShell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E5%86%B0%E8%9D%8E3-0%E5%88%86%E6%9E%90/">
+                        <span class="hidden-mobile">WebShell管理工具冰蝎3.0分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js" ></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"default"});
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

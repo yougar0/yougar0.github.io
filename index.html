@@ -166,6 +166,143 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/11/21/%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B8%A4%E9%81%93%E9%80%86%E5%90%91%E9%A2%98%E7%9B%AEWP/" target="_self">
+          2021西湖论剑两道逆向题目WP
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/11/21/%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91%E4%B8%A4%E9%81%93%E9%80%86%E5%90%91%E9%A2%98%E7%9B%AEWP/" target="_self">
+          
+          
+            
+          
+          TacticalArmed函数sub_401160反调试，通过清空Dr7寄存器反调试。直接nop掉调用反调试的地方即可bypass。
+
+接下来main函数先申请一段执行内存，然后对内存进行修改，最后添加ret指令返回。
+
+通过调试，查看这一块执行的指令内容
+
+经过分析，发现这一块指令执行的处理流程正是tea加密算法，其中四个密钥地址是405000到40500C，dump下来是[0x7CE45630
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-11-21 07:00" pubdate>
+              2021-11-21
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/CTF/">CTF</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/11/19/IDA%E6%8F%92%E4%BB%B6JNI-Helper%E9%80%82%E9%85%8D/" target="_self">
+          IDA插件JNI-Helper适配
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/11/19/IDA%E6%8F%92%E4%BB%B6JNI-Helper%E9%80%82%E9%85%8D/" target="_self">
+          
+          
+            
+          
+          前言今天打算把IDA搞得更智能一点，方便我这个懒人后面更快的进行分析工作。俗话说好事多磨，好工具的代码也需要多改才行。JNI_Helper这款插件，能满足我这个懒人自动修改JNI导出函数签名的目的，只是需要python2版本，并且存在代码还存在bug，另外自动化导出java native函数签名的方式也实在麻烦。为了满足我这个懒人刻薄的要求，那就只能自己动手改代码咯。项目地址:
+JNI_Helpe
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-11-19 21:52" pubdate>
+              2021-11-19
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E9%80%86%E5%90%91/">逆向</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/11/15/SRC%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%80%BB%E7%BB%93/" target="_self">
+          SRC信息收集总结
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/11/15/SRC%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%80%BB%E7%BB%93/" target="_self">
+          
+          
+            
+          
+          前言信息收集是渗透测试当中最重要的环节，在SRC漏洞挖掘过程中，挖掘的漏洞的多少很大程度上取决于信息收集是否全面。SRC信息收集一般从5个方面入手，分别是公司架构、子域名、C段、APP和小程序以及PC客户端和微信公众号、文档源码账号。
+实践公司架构公司架构可以通过爱查查、企查查、天眼查这些企业关系图谱网站获得。以唯品会举例，通过爱企查等公司架构网站，查询得到唯品会的子公司、APP、公众号、微博等相
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-11-15 19:05" pubdate>
+              2021-11-15
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/11/05/WebShell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7%E5%86%B0%E8%9D%8E3-0%E5%88%86%E6%9E%90/" target="_self">
           WebShell管理工具冰蝎3.0分析
         </a>
@@ -198,7 +335,7 @@ dnspy
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-11-05 04:29" pubdate>
+            <time datetime="2021-11-05 16:29" pubdate>
               2021-11-05
             </time>
           </div>
@@ -252,7 +389,7 @@ dnspy
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-11-03 02:34" pubdate>
+            <time datetime="2021-11-03 14:34" pubdate>
               2021-11-03
             </time>
           </div>
@@ -276,13 +413,13 @@ dnspy
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/11/01/HTB-Writer%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95/" target="_self">
+        <a href="/2021/11/02/HTB-Writer%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95/" target="_self">
           HTB-Writer通关记录
         </a>
       </h1>
 
       <p class="index-excerpt">
-        <a href="/2021/11/01/HTB-Writer%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95/" target="_self">
+        <a href="/2021/11/02/HTB-Writer%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95/" target="_self">
           
           
             
@@ -303,8 +440,8 @@ dnspy
         
           <div class="post-meta mr-3">
             <i class="iconfont icon-date"></i>
-            <time datetime="2021-11-01 22:59" pubdate>
-              2021-11-01
+            <time datetime="2021-11-02 10:59" pubdate>
+              2021-11-02
             </time>
           </div>
         
