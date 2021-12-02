@@ -16,12 +16,12 @@
   <meta name="description" content="">
   <meta name="author" content="yougar">
   <meta name="keywords" content="">
-  <meta name="description" content="前言今天打算把IDA搞得更智能一点，方便我这个懒人后面更快的进行分析工作。俗话说好事多磨，好工具的代码也需要多改才行。JNI_Helper这款插件，能满足我这个懒人自动修改JNI导出函数签名的目的，只是需要python2版本，并且存在代码还存在bug，另外自动化导出java native函数签名的方式也实在麻烦。为了满足我这个懒人刻薄的要求，那就只能自己动手改代码咯。项目地址: JNI_Helpe">
+  <meta name="description" content="前言今天打算把IDA搞得更智能一点，方便我这个懒人后面更快的进行分析工作。俗话说好事多磨，好工具的代码也需要多改才行。JNI_Helper这款插件，能满足我这个懒人自动修改JNI导出函数签名的目的，只是需要python2版本，并且存在代码还存在bug，另外自动化导出java native函数签名的方式也实在麻烦。为了满足我这个懒人刻薄的要求，那就只能自己动手改代码咯。项目地址:https:&#x2F;&#x2F;gi">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IDA插件JNI-Helper适配">
 <meta property="og:url" content="http://yougar0.github.io/2021/11/19/IDA%E6%8F%92%E4%BB%B6JNI-Helper%E9%80%82%E9%85%8D/index.html">
 <meta property="og:site_name" content="go hacking">
-<meta property="og:description" content="前言今天打算把IDA搞得更智能一点，方便我这个懒人后面更快的进行分析工作。俗话说好事多磨，好工具的代码也需要多改才行。JNI_Helper这款插件，能满足我这个懒人自动修改JNI导出函数签名的目的，只是需要python2版本，并且存在代码还存在bug，另外自动化导出java native函数签名的方式也实在麻烦。为了满足我这个懒人刻薄的要求，那就只能自己动手改代码咯。项目地址: JNI_Helpe">
+<meta property="og:description" content="前言今天打算把IDA搞得更智能一点，方便我这个懒人后面更快的进行分析工作。俗话说好事多磨，好工具的代码也需要多改才行。JNI_Helper这款插件，能满足我这个懒人自动修改JNI导出函数签名的目的，只是需要python2版本，并且存在代码还存在bug，另外自动化导出java native函数签名的方式也实在麻烦。为了满足我这个懒人刻薄的要求，那就只能自己动手改代码咯。项目地址:https:&#x2F;&#x2F;gi">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yougar0.github.io/images/pasted-79.png">
 <meta property="og:image" content="http://yougar0.github.io/images/pasted-80.png">
@@ -40,7 +40,7 @@
 <meta property="og:image" content="http://yougar0.github.io/images/pasted-99.png">
 <meta property="og:image" content="http://yougar0.github.io/images/pasted-100.png">
 <meta property="article:published_time" content="2021-11-19T13:52:00.000Z">
-<meta property="article:modified_time" content="2021-11-21T12:25:29.615Z">
+<meta property="article:modified_time" content="2021-11-21T12:56:02.411Z">
 <meta property="article:author" content="yougar">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary_large_image">
@@ -189,7 +189,7 @@
   
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1k 字
+      1.1k 字
     </span>
   
 
@@ -230,7 +230,7 @@
             <h1 style="display: none">IDA插件JNI-Helper适配</h1>
             
             <div class="markdown-body">
-              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>今天打算把IDA搞得更智能一点，方便我这个懒人后面更快的进行分析工作。俗话说好事多磨，好工具的代码也需要多改才行。JNI_Helper这款插件，能满足我这个懒人自动修改JNI导出函数签名的目的，只是需要python2版本，并且存在代码还存在bug，另外自动化导出java native函数签名的方式也实在麻烦。为了满足我这个懒人刻薄的要求，那就只能自己动手改代码咯。项目地址:</p>
+              <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>今天打算把IDA搞得更智能一点，方便我这个懒人后面更快的进行分析工作。俗话说好事多磨，好工具的代码也需要多改才行。JNI_Helper这款插件，能满足我这个懒人自动修改JNI导出函数签名的目的，只是需要python2版本，并且存在代码还存在bug，另外自动化导出java native函数签名的方式也实在麻烦。为了满足我这个懒人刻薄的要求，那就只能自己动手改代码咯。项目地址:<a target="_blank" rel="noopener" href="https://github.com/yougar0/AndroidReversePublicTools">https://github.com/yougar0/AndroidReversePublicTools</a></p>
 <h2 id="JNI-Helper-py"><a href="#JNI-Helper-py" class="headerlink" title="JNI_Helper.py"></a>JNI_Helper.py</h2><p>这里先说下，我下载的版本是0.1，之所以使用这个版本是因为我看到这个版本的签名导出代码依赖jadx，因此这个版本最适合改造成gui形式的懒人插件。^-^</p>
 <p>第一处是python3语法问题。</p>
 <p><img src="/images/pasted-79.png" srcset="/img/loading.gif" lazyload alt="python3语法问题"></p>
