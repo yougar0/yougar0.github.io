@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="yougar">
+  <meta name="keywords" content="">
+  <meta name="description" content="EDR检测与绕过原理在创建R3进程的时候，EDR会hook用户层的相关windows API调用，从而完成对进程动态行为的监控。比如，hook VirtualAlloc，监控内存分配。hook CreateProcess，监控进程创建。可以在用户层完成hook，也可以在内核层hook。用户层hook的好处是对性能的影响较小，相对于内核层hook更稳定，不容易导致系统蓝屏，所以很多EDR会选择在用户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hell&#39;s Gate技术">
+<meta property="og:url" content="http://yougar0.github.io/2021/12/03/Hell-s-Gate%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="go hacking">
+<meta property="og:description" content="EDR检测与绕过原理在创建R3进程的时候，EDR会hook用户层的相关windows API调用，从而完成对进程动态行为的监控。比如，hook VirtualAlloc，监控内存分配。hook CreateProcess，监控进程创建。可以在用户层完成hook，也可以在内核层hook。用户层hook的好处是对性能的影响较小，相对于内核层hook更稳定，不容易导致系统蓝屏，所以很多EDR会选择在用户">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/%E4%BB%8E%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9D%97%E5%BD%93%E4%B8%AD%E6%89%BE%E5%88%B0ntdll.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/%E9%81%8D%E5%8E%86%E5%AF%BC%E5%87%BA%E8%A1%A8%E8%8E%B7%E5%BE%97%E5%AF%BC%E5%87%BA%E7%9A%84Zw%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/%E5%80%92%E5%BA%8F%E6%8E%92%E5%BA%8F%E5%AD%98%E5%82%A8.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/syscall%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B1.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/syscall%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B2.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Hell_Gate_1.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Hell_Gate_2.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Hell_Gate_3.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Hell_Gate_4.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Hell_Gate_5.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Hell_Gate_6.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Hell_Gate_7.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Hell_Gate_8.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Halo_Gate_1.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/Halo_Gate_2.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/HellsGatePoc.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/shellcode%E5%92%8C%E5%8A%A0%E8%BD%BD%E5%99%A8.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/windows_defender%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/windows_defender%E6%8E%92%E9%99%A4%E6%96%87%E4%BB%B6%E5%A4%B9.png">
+<meta property="og:image" content="http://yougar0.github.io/images/syscall/defender_bypass.png">
+<meta property="article:published_time" content="2021-12-03T02:49:00.000Z">
+<meta property="article:modified_time" content="2021-12-07T09:01:01.709Z">
+<meta property="article:author" content="yougar">
+<meta property="article:tag" content="anti-bypass">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://yougar0.github.io/images/syscall/%E4%BB%8E%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9D%97%E5%BD%93%E4%B8%AD%E6%89%BE%E5%88%B0ntdll.png">
+  
+  <title>Hell&#39;s Gate技术 - go hacking</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/ir-black.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yougar0.github.io","root":"/","version":"1.8.12","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname"}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Go Hacking</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Hell&#39;s Gate技术">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-12-03 10:49" pubdate>
+        2021年12月3日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.1k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      7 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Hell&#39;s Gate技术</h1>
+            
+            <div class="markdown-body">
+              <h2 id="EDR检测与绕过原理"><a href="#EDR检测与绕过原理" class="headerlink" title="EDR检测与绕过原理"></a>EDR检测与绕过原理</h2><p>在创建R3进程的时候，EDR会hook用户层的相关windows API调用，从而完成对进程动态行为的监控。比如，hook VirtualAlloc，监控内存分配。hook CreateProcess，监控进程创建。可以在用户层完成hook，也可以在内核层hook。用户层hook的好处是对性能的影响较小，相对于内核层hook更稳定，不容易导致系统蓝屏，所以很多EDR会选择在用户层hook，同时在内核层使用回调监控重要的内核api调用。一个进程分配了RWX属性的内存，或者修改了内存属性，将RW的内存修改为了RWX，由于RWX内存属性是shellcode或反射型DLL加载所用的内存属性，因此EDR会对申请的内存进行扫描，匹配到恶意软件的yara规则后，将会杀死恶意进程，并向控制中心发送告警。为了避免在用户层被EDR hook的敏感函数检测到敏感行为，利用从ntdll中读取到的系统调用号进行系统直接调用来绕过敏感API函数的hook。</p>
+<h2 id="SysWhispers2"><a href="#SysWhispers2" class="headerlink" title="SysWhispers2"></a>SysWhispers2</h2><p>国外的师傅开源一个仓库<a target="_blank" rel="noopener" href="https://github.com/jthuraisamy/SysWhispers2">SysWhispers2</a>，代码原理是从内存当中的ntdll中根据导出函数的地址顺序，确定系统调用号。SysWhispers2的优点是对于开发者而言，只需要正常调用Nt*系列函数即可，封装比较便捷，缺点也很明显，会增加代码所占用空间。</p>
+<p><img src="/images/syscall/%E4%BB%8E%E5%B7%B2%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9D%97%E5%BD%93%E4%B8%AD%E6%89%BE%E5%88%B0ntdll.png" srcset="/img/loading.gif" lazyload alt="从已加载的内存模块当中找到ntdll"></p>
+<p>首先程序需要调用SW2_PopulateSyscallList从内存当中搜索NTDLL内存模块，需要注意的是，这里作者是通过名称比较来判断的。</p>
+<p><img src="/images/syscall/%E9%81%8D%E5%8E%86%E5%AF%BC%E5%87%BA%E8%A1%A8%E8%8E%B7%E5%BE%97%E5%AF%BC%E5%87%BA%E7%9A%84Zw%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80.png" srcset="/img/loading.gif" lazyload alt="遍历导出表获得导出的Zw函数地址"></p>
+<p>找到这个ntdll模块之后，遍历导出函数表确定导出的Zw的函数地址，并保存到全局syscall表中。</p>
+<p><img src="/images/syscall/%E5%80%92%E5%BA%8F%E6%8E%92%E5%BA%8F%E5%AD%98%E5%82%A8.png" srcset="/img/loading.gif" lazyload alt="倒序排序存储"></p>
+<p>对函数地址倒序排序存储，系统调用ENTRY的数组下标即为系统调用号。</p>
+<p><img src="/images/syscall/syscall%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B1.png" srcset="/img/loading.gif" lazyload alt="syscall调用1"></p>
+<p><img src="/images/syscall/syscall%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B2.png" srcset="/img/loading.gif" lazyload alt="syscall调用2"></p>
+<p>这之后就可以像调用正常的Nt*函数一样直接走syscall调用，syscall的调用号通过预先定义的HASH值从存储的函数数组中搜索，比较相等的函数HASH的下标即为调用号。</p>
+<h2 id="Hell’s-Gate"><a href="#Hell’s-Gate" class="headerlink" title="Hell’s Gate"></a>Hell’s Gate</h2><p><a target="_blank" rel="noopener" href="https://vxug.fakedoma.in/papers/VXUG/Exclusive/HellsGate.pdf">Hell’s Gate</a>方式是另一种syscall动态调用方案，其原理是从内存中已经加载的ntdll.dll模块中通过解析导出表，定位函数地址，再通过特征码获取系统调用号，这种方式的好处是可以准确的获取系统调用号，缺点是需要一个干净的内存ntdll模块，否则将无法完成syscall调用号的获取（遇到hook ntdll系统调用的EDR就不行了）。</p>
+<p><img src="/images/syscall/Hell_Gate_1.png" srcset="/img/loading.gif" lazyload alt="Hell‘s Gate入口分析1"></p>
+<p><img src="/images/syscall/Hell_Gate_2.png" srcset="/img/loading.gif" lazyload alt="Hell‘s Gate入口分析2"></p>
+<p>首先获取进程PEB信息，并判断系统版本，如果不是windows 10，则直接退出程序。</p>
+<p><img src="/images/syscall/Hell_Gate_3.png" srcset="/img/loading.gif" lazyload alt="Hell‘s Gate入口分析3"></p>
+<p><img src="/images/syscall/Hell_Gate_4.png" srcset="/img/loading.gif" lazyload alt="Hell‘s Gate入口分析4"></p>
+<p>获取导出表信息，如果没有找到导出表，则直接退出。</p>
+<p><img src="/images/syscall/Hell_Gate_5.png" srcset="/img/loading.gif" lazyload alt="Hell‘s Gate入口分析5"></p>
+<p><img src="/images/syscall/Hell_Gate_6.png" srcset="/img/loading.gif" lazyload alt="Hell‘s Gate入口分析6"></p>
+<p>通过遍历导出表，找到与函数HASH相同的地址信息，然后简单粗暴的比较几个字节，判断函数是否被HOOK，如果被HOOK就直接返回FALSE。</p>
+<p><img src="/images/syscall/Hell_Gate_7.png" srcset="/img/loading.gif" lazyload alt="Hell‘s Gate入口分析7"></p>
+<p><img src="/images/syscall/Hell_Gate_8.png" srcset="/img/loading.gif" lazyload alt="Hell‘s Gate入口分析8"></p>
+<p>最后通过传入函数获取到的系统调用号，执行payload，完成direct syscall调用。</p>
+<h2 id="Halo’s-Gate"><a href="#Halo’s-Gate" class="headerlink" title="Halo’s Gate"></a>Halo’s Gate</h2><p><a target="_blank" rel="noopener" href="https://blog.sektor7.net/#!res/2021/halosgate.md">Halo’s Gate</a>是对Hell’s Gate的增强。Halo’s Gate的原理是EDR不可能HOOK全部的Nt*函数，总有一些不敏感的函数没有被HOOK，程序当中以STUB_SIZE(这个长度为32)上下循环遍历，找到没有被HOOK的STUB后获取其系统调用号再减去移动的步数，就是所要搜索的系统调用号。这种方式的优点是可以避免所要搜索的函数被hook之后，程序直接返回。</p>
+<p><img src="/images/syscall/Halo_Gate_1.png" srcset="/img/loading.gif" lazyload alt="Halo&#39;s Gate分析1"></p>
+<h2 id="Tartarus’-Gate"><a href="#Tartarus’-Gate" class="headerlink" title="Tartarus’ Gate"></a>Tartarus’ Gate</h2><p><a target="_blank" rel="noopener" href="https://trickster0.github.io/posts/Halo's-Gate-Evolves-to-Tartarus-Gate/">Tartarus’ Gate</a>其作者声称是对Halo’s Gate的增强，然而当读完代码之后，笔者觉得新增的check没有意义。</p>
+<p><img src="/images/syscall/Halo_Gate_2.png" srcset="/img/loading.gif" lazyload alt="Tartarus&#39;s Gate分析"></p>
+<p>比较第一个字节和第四个是否是0xe9(jmp指令)，来判断是否被hook，这种例外已经被特征码匹配所包含，所以笔者觉得新增的代码判断没有意义。</p>
+<h2 id="另一种获取干净的ntdll的方式"><a href="#另一种获取干净的ntdll的方式" class="headerlink" title="另一种获取干净的ntdll的方式"></a>另一种获取干净的ntdll的方式</h2><p>这一点已经被EDR作为异常行为监控的特点之一，可以参看<a target="_blank" rel="noopener" href="https://www.cyberbit.com/blog/endpoint-security/malware-mitigation-when-direct-system-calls-are-used/">检测使用syscall的恶意软件tips</a>。原理是从系统磁盘读取一份ntdll（x86进程是C:\Windows\SysWow64\ntdll.dll，x64进程是C:\Windows\Systen32\ntdll.dll）的数据到内存，通过原始文件中的导出表数据获取没有被hook的Nt函数，进而获得系统调用号。github上有利用这一技术的poc实现，<a target="_blank" rel="noopener" href="https://github.com/N4kedTurtle/HellsGatePoC">HellsGatePoc</a>。</p>
+<p><img src="/images/syscall/HellsGatePoc.png" srcset="/img/loading.gif" lazyload alt="HellsGatePoc"></p>
+<h2 id="测试bypass效果"><a href="#测试bypass效果" class="headerlink" title="测试bypass效果"></a>测试bypass效果</h2><p>笔者这里以64位加载器为例，测试windows defender bypass效果。</p>
+<p><img src="/images/syscall/shellcode%E5%92%8C%E5%8A%A0%E8%BD%BD%E5%99%A8.png" srcset="/img/loading.gif" lazyload alt="shellcode填充"></p>
+<p>使用shellcode生成框架生成上线的shellcode，转换为C语言数组格式，利用syscall编写的加载器执行上线，shellcode未经过编码加密。</p>
+<p><img src="/images/syscall/windows_defender%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81.png" srcset="/img/loading.gif" lazyload alt="windows defender运行状态"></p>
+<p><img src="/images/syscall/windows_defender%E6%8E%92%E9%99%A4%E6%96%87%E4%BB%B6%E5%A4%B9.png" srcset="/img/loading.gif" lazyload alt="windows defender排除文件夹"></p>
+<p>windows defender保护状态为全开，桌面文件夹也没在排除项中。</p>
+<p><img src="/images/syscall/defender_bypass.png" srcset="/img/loading.gif" lazyload alt="bypass defender"></p>
+<p>绕过defender查杀上线成功，其他杀软请自行进行修改测试，这里只是验证syscall绕过查杀的效果。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://processhacker.sourceforge.io/">processhacker 2.39</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/sysinternals/downloads/sysinternals-suite">Sysinternals Suite</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/jthuraisamy/SysWhispers2">SysWhispers2</a></li>
+<li><a target="_blank" rel="noopener" href="https://teamhydra.blog/2020/09/18/implementing-direct-syscalls-using-hells-gate/">implementing-direct-syscalls-using-hells-gate</a></li>
+<li><a target="_blank" rel="noopener" href="https://vxug.fakedoma.in/papers/VXUG/Exclusive/HellsGate.pdf">Hell’s Gate</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cyberbit.com/blog/endpoint-security/malware-mitigation-when-direct-system-calls-are-used/">检测使用syscall的恶意软件tips</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.sektor7.net/#!res/2021/halosgate.md">Halo’s Gate</a></li>
+<li><a target="_blank" rel="noopener" href="https://trickster0.github.io/posts/Halo's-Gate-Evolves-to-Tartarus-Gate/">Tartarus’ Gate</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/mai1zhi2/SysWhispers2_x86">SysWhispers2_x86</a></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/anti-bypass/">anti-bypass</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/12/02/CS%E4%BA%8C%E5%BC%80%E7%9B%B8%E5%85%B3/">
+                        <span class="hidden-mobile">CS二开相关</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js" ></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"default"});
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>

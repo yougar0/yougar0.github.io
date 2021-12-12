@@ -1,0 +1,458 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="yougar">
+  <meta name="keywords" content="">
+  <meta name="description" content="计算HASH，使用windows命令行 1certutil -hashfile cobaltstrike.jar SHA256  验证HASH官方地址 1https:&#x2F;&#x2F;verify.cobaltstrike.com&#x2F;  CS 4.3相关 12345678910111213141516171819202122232425262728293031323334353637383940414243444">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS二开相关">
+<meta property="og:url" content="http://yougar0.github.io/2021/12/02/CS%E4%BA%8C%E5%BC%80%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="go hacking">
+<meta property="og:description" content="计算HASH，使用windows命令行 1certutil -hashfile cobaltstrike.jar SHA256  验证HASH官方地址 1https:&#x2F;&#x2F;verify.cobaltstrike.com&#x2F;  CS 4.3相关 12345678910111213141516171819202122232425262728293031323334353637383940414243444">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-02T08:04:00.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:27:37.399Z">
+<meta property="article:author" content="yougar">
+<meta property="article:tag" content="二开">
+<meta name="twitter:card" content="summary_large_image">
+  
+  <title>CS二开相关 - go hacking</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/ir-black.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yougar0.github.io","root":"/","version":"1.8.12","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname"}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Go Hacking</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="CS二开相关">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-12-02 16:04" pubdate>
+        2021年12月2日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      10k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      32 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CS二开相关</h1>
+            
+            <div class="markdown-body">
+              <p>计算HASH，使用windows命令行</p>
+<figure class="highlight powershell"><table><tr><td class="gutter hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs powershell">certutil <span class="hljs-literal">-hashfile</span> cobaltstrike.jar SHA256<br></code></pre></div></td></tr></table></figure>
+
+<p>验证HASH官方地址</p>
+<figure class="highlight powershell"><table><tr><td class="gutter hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs powershell">https://verify.cobaltstrike.com/<br></code></pre></div></td></tr></table></figure>
+
+<p>CS 4.3相关</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">package</span> common;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Authorization</span> </span>&#123;<br>   <span class="hljs-keyword">protected</span> <span class="hljs-keyword">int</span> watermark = <span class="hljs-number">0</span>;<br>   <span class="hljs-keyword">protected</span> String validto = <span class="hljs-string">&quot;&quot;</span>;<br>   <span class="hljs-keyword">protected</span> String error = <span class="hljs-keyword">null</span>;<br>   <span class="hljs-keyword">protected</span> <span class="hljs-keyword">boolean</span> valid = <span class="hljs-keyword">false</span>;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Authorization</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">this</span>.watermark = ; <span class="hljs-comment">// 这里定义成字节的水印</span><br>      <span class="hljs-keyword">this</span>.validto = <span class="hljs-string">&quot;forever&quot;</span>;<br>      <span class="hljs-keyword">this</span>.error = <span class="hljs-keyword">null</span>;<br>      <span class="hljs-keyword">this</span>.valid = <span class="hljs-keyword">true</span>;<br>      <span class="hljs-keyword">try</span> &#123;<br>         MudgeSanity.systemDetail(<span class="hljs-string">&quot;valid to&quot;</span>, <span class="hljs-string">&quot;perpetual&quot;</span>);<br>         MudgeSanity.systemDetail(<span class="hljs-string">&quot;id&quot;</span>, getWatermark());<br>         SleevedResource.Setup(hex2bytes(<span class="hljs-string">&quot;3a4425490f389aeec312bdd758ad2b99&quot;</span>));<br>      &#125;<span class="hljs-keyword">catch</span> (Exception ex2) &#123;<br>         MudgeSanity.logException(<span class="hljs-string">&quot;auth file parsing&quot;</span>, ex2, <span class="hljs-keyword">false</span>);<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-keyword">private</span> <span class="hljs-keyword">byte</span>[] hex2bytes(String s) &#123;<br>      <span class="hljs-keyword">int</span> len = s.length();<br>      <span class="hljs-keyword">byte</span>[] data = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[len / <span class="hljs-number">2</span>];<br>      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; len; i += <span class="hljs-number">2</span>) &#123;<br>         data[i / <span class="hljs-number">2</span>] = (<span class="hljs-keyword">byte</span>) ((Character.digit(s.charAt(i), <span class="hljs-number">16</span>) &lt;&lt; <span class="hljs-number">4</span>) + Character.digit(s.charAt(i+<span class="hljs-number">1</span>), <span class="hljs-number">16</span>));<br>      &#125;<br>      <span class="hljs-keyword">return</span> data;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isPerpetual</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;forever&quot;</span>.equals(<span class="hljs-keyword">this</span>.validto);<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isValid</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.valid;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getError</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.error;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">getWatermark</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.watermark + <span class="hljs-string">&quot;&quot;</span>;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">long</span> <span class="hljs-title">getExpirationDate</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">return</span> CommonUtils.parseDate(<span class="hljs-keyword">this</span>.validto, <span class="hljs-string">&quot;yyyyMMdd&quot;</span>);<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isExpired</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">return</span> System.currentTimeMillis() &gt; <span class="hljs-keyword">this</span>.getExpirationDate() + CommonUtils.days(<span class="hljs-number">1</span>);<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> String <span class="hljs-title">whenExpires</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">long</span> var1 = (<span class="hljs-keyword">this</span>.getExpirationDate() + CommonUtils.days(<span class="hljs-number">1</span>) - System.currentTimeMillis()) / CommonUtils.days(<span class="hljs-number">1</span>);<br>      <span class="hljs-keyword">if</span> (var1 == <span class="hljs-number">1L</span>) &#123;<br>         <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;1 day (&quot;</span> + CommonUtils.formatDateAny(<span class="hljs-string">&quot;MMMMM d, YYYY&quot;</span>, <span class="hljs-keyword">this</span>.getExpirationDate()) + <span class="hljs-string">&quot;)&quot;</span>;<br>      &#125; <span class="hljs-keyword">else</span> &#123;<br>         <span class="hljs-keyword">return</span> var1 &lt;= <span class="hljs-number">0L</span> ? <span class="hljs-string">&quot;TODAY (&quot;</span> + CommonUtils.formatDateAny(<span class="hljs-string">&quot;MMMMM d, YYYY&quot;</span>, <span class="hljs-keyword">this</span>.getExpirationDate()) + <span class="hljs-string">&quot;)&quot;</span> : var1 + <span class="hljs-string">&quot; days (&quot;</span> + CommonUtils.formatDateAny(<span class="hljs-string">&quot;MMMMM d, YYYY&quot;</span>, <span class="hljs-keyword">this</span>.getExpirationDate()) + <span class="hljs-string">&quot;)&quot;</span>;<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isAlmostExpired</span><span class="hljs-params">()</span> </span>&#123;<br>      <span class="hljs-keyword">long</span> var1 = System.currentTimeMillis() + CommonUtils.days(<span class="hljs-number">30</span>);<br>      <span class="hljs-keyword">return</span> var1 &gt; <span class="hljs-keyword">this</span>.getExpirationDate();<br>   &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">package</span> beacon;<br><br><span class="hljs-keyword">import</span> common.CommonUtils;<br><span class="hljs-keyword">import</span> java.io.ByteArrayOutputStream;<br><span class="hljs-keyword">import</span> java.util.HashMap;<br><span class="hljs-keyword">import</span> java.util.HashSet;<br><span class="hljs-keyword">import</span> java.util.Iterator;<br><span class="hljs-keyword">import</span> java.util.LinkedList;<br><span class="hljs-keyword">import</span> java.util.List;<br><span class="hljs-keyword">import</span> java.util.Map;<br><span class="hljs-keyword">import</span> java.util.Set;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BeaconData</span> </span>&#123;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> MODE_HTTP = <span class="hljs-number">0</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> MODE_DNS = <span class="hljs-number">1</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> MODE_DNS_TXT = <span class="hljs-number">2</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> MODE_DNS6 = <span class="hljs-number">3</span>;<br>   <span class="hljs-keyword">protected</span> Map queues = <span class="hljs-keyword">new</span> HashMap();<br>   <span class="hljs-keyword">protected</span> Map modes = <span class="hljs-keyword">new</span> HashMap();<br>   <span class="hljs-keyword">protected</span> Set tasked = <span class="hljs-keyword">new</span> HashSet();<br>   <span class="hljs-keyword">protected</span> <span class="hljs-keyword">boolean</span> shouldPad = <span class="hljs-keyword">false</span>;<br>   <span class="hljs-keyword">protected</span> <span class="hljs-keyword">long</span> when = <span class="hljs-number">0L</span>;<br><br>   <span class="hljs-function"><span class="hljs-keyword">protected</span> List <span class="hljs-title">getQueue</span><span class="hljs-params">(String var1)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.queues.containsKey(var1)) &#123;<br>            <span class="hljs-keyword">return</span> (List)<span class="hljs-keyword">this</span>.queues.get(var1);<br>         &#125; <span class="hljs-keyword">else</span> &#123;<br>            LinkedList var3 = <span class="hljs-keyword">new</span> LinkedList();<br>            <span class="hljs-keyword">this</span>.queues.put(var1, var3);<br>            <span class="hljs-keyword">return</span> var3;<br>         &#125;<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">isNewSession</span><span class="hljs-params">(String var1)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         <span class="hljs-keyword">return</span> !<span class="hljs-keyword">this</span>.tasked.contains(var1);<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">virgin</span><span class="hljs-params">(String var1)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         <span class="hljs-keyword">this</span>.tasked.remove(var1);<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">shouldPad</span><span class="hljs-params">(<span class="hljs-keyword">boolean</span> var1)</span> </span>&#123;<br>      <span class="hljs-keyword">this</span>.shouldPad = <span class="hljs-keyword">false</span>; <span class="hljs-comment">// 修改这里为false，不校验jar包完整性</span><br>      <span class="hljs-keyword">this</span>.when = System.currentTimeMillis() + <span class="hljs-number">1800000L</span>;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">task</span><span class="hljs-params">(String var1, <span class="hljs-keyword">byte</span>[] var2)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         List var4 = <span class="hljs-keyword">this</span>.getQueue(var1);<br>         <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.shouldPad &amp;&amp; System.currentTimeMillis() &gt; <span class="hljs-keyword">this</span>.when) &#123;<br>            CommandBuilder var5 = <span class="hljs-keyword">new</span> CommandBuilder();<br>            var5.setCommand(<span class="hljs-number">3</span>);<br>            var5.addString(var2);<br>            var4.add(var5.build());<br>         &#125; <span class="hljs-keyword">else</span> &#123;<br>            var4.add(var2);<br>         &#125;<br><br>         <span class="hljs-keyword">this</span>.tasked.add(var1);<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">seen</span><span class="hljs-params">(String var1)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         <span class="hljs-keyword">this</span>.tasked.add(var1);<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">clear</span><span class="hljs-params">(String var1)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         List var3 = <span class="hljs-keyword">this</span>.getQueue(var1);<br>         var3.clear();<br>         <span class="hljs-keyword">this</span>.tasked.add(var1);<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">getMode</span><span class="hljs-params">(String var1)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         String var3 = (String)<span class="hljs-keyword">this</span>.modes.get(var1);<br>         <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;dns-txt&quot;</span>.equals(var3)) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>;<br>         &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;dns6&quot;</span>.equals(var3)) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-number">3</span>;<br>         &#125; <span class="hljs-keyword">else</span> &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;dns&quot;</span>.equals(var3) ? <span class="hljs-number">1</span> : <span class="hljs-number">2</span>;<br>         &#125;<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">mode</span><span class="hljs-params">(String var1, String var2)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         <span class="hljs-keyword">this</span>.modes.put(var1, var2);<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">boolean</span> <span class="hljs-title">hasTask</span><span class="hljs-params">(String var1)</span> </span>&#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         List var3 = <span class="hljs-keyword">this</span>.getQueue(var1);<br>         <span class="hljs-keyword">return</span> var3.size() &gt; <span class="hljs-number">0</span>;<br>      &#125;<br>   &#125;<br><br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">byte</span>[] dump(String var1, <span class="hljs-keyword">int</span> var2) &#123;<br>      <span class="hljs-keyword">synchronized</span>(<span class="hljs-keyword">this</span>) &#123;<br>         <span class="hljs-keyword">int</span> var4 = <span class="hljs-number">0</span>;<br>         List var5 = <span class="hljs-keyword">this</span>.getQueue(var1);<br>         <span class="hljs-keyword">if</span> (var5.size() == <span class="hljs-number">0</span>) &#123;<br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[<span class="hljs-number">0</span>];<br>         &#125; <span class="hljs-keyword">else</span> &#123;<br>            ByteArrayOutputStream var6 = <span class="hljs-keyword">new</span> ByteArrayOutputStream(<span class="hljs-number">8192</span>);<br>            Iterator var7 = var5.iterator();<br><br>            <span class="hljs-keyword">while</span>(var7.hasNext()) &#123;<br>               <span class="hljs-keyword">byte</span>[] var8 = (<span class="hljs-keyword">byte</span>[])((<span class="hljs-keyword">byte</span>[])var7.next());<br>               <span class="hljs-keyword">if</span> (var4 + var8.length &lt; var2) &#123;<br>                  var6.write(var8, <span class="hljs-number">0</span>, var8.length);<br>                  var7.remove();<br>                  var4 += var8.length;<br>               &#125; <span class="hljs-keyword">else</span> &#123;<br>                  <span class="hljs-keyword">if</span> (var8.length &lt; var2) &#123;<br>                     CommonUtils.print_warn(<span class="hljs-string">&quot;Chunking tasks for &quot;</span> + var1 + <span class="hljs-string">&quot;! &quot;</span> + var8.length + <span class="hljs-string">&quot; + &quot;</span> + var4 + <span class="hljs-string">&quot; past threshold. &quot;</span> + var5.size() + <span class="hljs-string">&quot; task(s) on hold until next checkin.&quot;</span>);<br>                     <span class="hljs-keyword">break</span>;<br>                  &#125;<br><br>                  CommonUtils.print_error(<span class="hljs-string">&quot;Woah! Task &quot;</span> + var8.length + <span class="hljs-string">&quot; for &quot;</span> + var1 + <span class="hljs-string">&quot; is beyond our limit. Dropping it&quot;</span>);<br>                  var7.remove();<br>               &#125;<br>            &#125;<br><br>            <span class="hljs-keyword">return</span> var6.toByteArray();<br>         &#125;<br>      &#125;<br>   &#125;<br>&#125;<br><br></code></pre></div></td></tr></table></figure>
+<p>搞完这些，就可以白嫖了。</p>
+<p>beacon/Tasks 定义命令编号   beacon/Job 定义beacon端返回模块执行结果编号</p>
+<figure class="highlight java"><table><tr><td class="gutter hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">package</span> beacon;<br><br><span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Tasks</span> </span>&#123;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWN = <span class="hljs-number">1</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SHELL = <span class="hljs-number">2</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_DIE = <span class="hljs-number">3</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SLEEP = <span class="hljs-number">4</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_CD = <span class="hljs-number">5</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_KEYLOG_START = <span class="hljs-number">6</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_KEYLOG_STOP = <span class="hljs-number">7</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_INJECT_PID = <span class="hljs-number">9</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_INJECT_PING = <span class="hljs-number">18</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_UPLOAD = <span class="hljs-number">10</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWN_PROC_X86 = <span class="hljs-number">13</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_JOB_REGISTER = <span class="hljs-number">40</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_INJECTX64_PID = <span class="hljs-number">43</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWNX64 = <span class="hljs-number">44</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_LSOCKET_BIND = <span class="hljs-number">50</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_LSOCKET_CLOSE = <span class="hljs-number">51</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_JOB_REGISTER_IMPERSONATE = <span class="hljs-number">62</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWN_POWERSHELLX86 = <span class="hljs-number">63</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWN_POWERSHELLX64 = <span class="hljs-number">64</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_INJECT_POWERSHELLX86_PID = <span class="hljs-number">65</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_INJECT_POWERSHELLX64_PID = <span class="hljs-number">66</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_UPLOAD_CONTINUE = <span class="hljs-number">67</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_PIPE_OPEN_EXPLICIT = <span class="hljs-number">68</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWN_PROC_X64 = <span class="hljs-number">69</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_JOB_SPAWN_X86 = <span class="hljs-number">70</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_JOB_SPAWN_X64 = <span class="hljs-number">71</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SETENV = <span class="hljs-number">72</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_FILE_COPY = <span class="hljs-number">73</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_FILE_MOVE = <span class="hljs-number">74</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_PPID = <span class="hljs-number">75</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_RUN_UNDER_PID = <span class="hljs-number">76</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_GETPRIVS = <span class="hljs-number">77</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_EXECUTE_JOB = <span class="hljs-number">78</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_PSH_HOST_TCP = <span class="hljs-number">79</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_DLL_LOAD = <span class="hljs-number">80</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_REG_QUERY = <span class="hljs-number">81</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_LSOCKET_TCPPIVOT = <span class="hljs-number">82</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_ARGUE_ADD = <span class="hljs-number">83</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_ARGUE_REMOVE = <span class="hljs-number">84</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_ARGUE_LIST = <span class="hljs-number">85</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_TCP_CONNECT = <span class="hljs-number">86</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_JOB_SPAWN_TOKEN_X86 = <span class="hljs-number">87</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_JOB_SPAWN_TOKEN_X64 = <span class="hljs-number">88</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWN_TOKEN_X86 = <span class="hljs-number">89</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWN_TOKEN_X64 = <span class="hljs-number">90</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_INJECTX64_PING = <span class="hljs-number">91</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_BLOCKDLLS = <span class="hljs-number">92</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWNAS_X86 = <span class="hljs-number">93</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWNAS_X64 = <span class="hljs-number">94</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_INLINE_EXECUTE = <span class="hljs-number">95</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_RUN_INJECT_X86 = <span class="hljs-number">96</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_RUN_INJECT_X64 = <span class="hljs-number">97</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWNU_X86 = <span class="hljs-number">98</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_SPAWNU_X64 = <span class="hljs-number">99</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_INLINE_EXECUTE_OBJECT = <span class="hljs-number">100</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_JOB_REGISTER_MSGMODE = <span class="hljs-number">101</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> COMMAND_LSOCKET_BIND_LOCALHOST = <span class="hljs-number">102</span>;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs java"><span class="hljs-keyword">package</span> beacon;<br><br><span class="hljs-keyword">import</span> common.CommonUtils;<br><span class="hljs-keyword">import</span> common.ReflectiveDLL;<br><span class="hljs-keyword">import</span> common.SleevedResource;<br><span class="hljs-keyword">import</span> pe.PostExObfuscator;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Job</span> </span>&#123;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_OUTPUT = <span class="hljs-number">0</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_KEYSTROKES = <span class="hljs-number">1</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_FILE = <span class="hljs-number">2</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_SCREENSHOT = <span class="hljs-number">3</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_CLOSE = <span class="hljs-number">4</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_READ = <span class="hljs-number">5</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_CONNECT = <span class="hljs-number">6</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PING = <span class="hljs-number">7</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_FILE_WRITE = <span class="hljs-number">8</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_FILE_CLOSE = <span class="hljs-number">9</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PIPE_OPEN = <span class="hljs-number">10</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PIPE_CLOSE = <span class="hljs-number">11</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PIPE_READ = <span class="hljs-number">12</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_POST_ERROR = <span class="hljs-number">13</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PIPE_PING = <span class="hljs-number">14</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_TOKEN_STOLEN = <span class="hljs-number">15</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_TOKEN_GETUID = <span class="hljs-number">16</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PROCESS_LIST = <span class="hljs-number">17</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_POST_REPLAY_ERROR = <span class="hljs-number">18</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PWD = <span class="hljs-number">19</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_JOBS = <span class="hljs-number">20</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_HASHDUMP = <span class="hljs-number">21</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PENDING = <span class="hljs-number">22</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_ACCEPT = <span class="hljs-number">23</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_NETVIEW = <span class="hljs-number">24</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_PORTSCAN = <span class="hljs-number">25</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_DEAD = <span class="hljs-number">26</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_SSH_STATUS = <span class="hljs-number">27</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_CHUNK_ALLOCATE = <span class="hljs-number">28</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_CHUNK_SEND = <span class="hljs-number">29</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_OUTPUT_OEM = <span class="hljs-number">30</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_ERROR = <span class="hljs-number">31</span>;<br>   <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CALLBACK_OUTPUT_UTF8 = <span class="hljs-number">32</span>;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>package beacon 与beacon相关DLL只在客户端保存即可，与beacon执行命令的结果会在服务器存储以及通过广播发给所有用户/也可以指定某个用户。需要二次开发时注意让DLL的执行结果支持返回给指定用户。</p>
+<p>关于Beacon端二开，在看了Majority师傅的CS二开浅析视频后，注意到以下几点。</p>
+<p>静态A.B.U:</p>
+<ul>
+<li>加密</li>
+<li>混淆：导入表、字符串、花指令</li>
+<li>隐写：图片、音频</li>
+</ul>
+<p>动态A.B.U:</p>
+<ul>
+<li>敏感API调用走syscall，参考地狱之门的实现</li>
+<li>内存加载(DarkLoadLibrary)</li>
+<li>内存申请从RWX改成RW -&gt; RX</li>
+<li>ACE(AlternativeShellcodeExec)</li>
+<li>三端分离(加载器、安装器、核心控制端)</li>
+<li>其他的执行方式</li>
+<li>禁止AMSI</li>
+<li>禁止ETW</li>
+</ul>
+<p>推荐用Native(C++、go等)写后渗透模块，比较通用，C#需要对环境进行适配，不是很通用。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BA%8C%E5%BC%80/">二开</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/12/03/Hell-s-Gate%E6%8A%80%E6%9C%AF/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Hell's Gate技术</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/12/02/CS%E9%AD%94%E6%94%B9%E4%B8%8E%E5%A2%9E%E5%BC%BA/">
+                        <span class="hidden-mobile">CS魔改与增强</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js" ></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"default"});
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
