@@ -1,0 +1,503 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="yougar">
+  <meta name="keywords" content="">
+  <meta name="description" content="这篇文章记录下此次APP渗透测试过程，包括从0搭建渗透测试环境，程序hook检测绕过，绕过原理。 渗透测试环境搭建越狱工具环境 IPhone 7，固件版本为12.4.1  爱思助手7.0官方最新版本   操作步骤在进行越狱前，请先确保设备上的重要数据已经备份，比如通讯录等，因为越狱过程无法保证不出现问题，而一旦出现意外设备上的重要数据可能会丢失。 首先连接手机到PC电脑，在手机上弹出的允许设备访问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IOS端渗透测试从0到1">
+<meta property="og:url" content="http://yougar0.github.io/2021/12/22/IOS%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%BB%8E0%E5%88%B01/index.html">
+<meta property="og:site_name" content="go hacking">
+<meta property="og:description" content="这篇文章记录下此次APP渗透测试过程，包括从0搭建渗透测试环境，程序hook检测绕过，绕过原理。 渗透测试环境搭建越狱工具环境 IPhone 7，固件版本为12.4.1  爱思助手7.0官方最新版本   操作步骤在进行越狱前，请先确保设备上的重要数据已经备份，比如通讯录等，因为越狱过程无法保证不出现问题，而一旦出现意外设备上的重要数据可能会丢失。 首先连接手机到PC电脑，在手机上弹出的允许设备访问">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E4%B8%80%E9%94%AE%E8%B6%8A%E7%8B%B1.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E8%B6%8A%E7%8B%B1%E5%B7%A5%E5%85%B7%E9%80%89%E9%A1%B9.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E5%BC%80%E5%A7%8B%E8%B6%8A%E7%8B%B1.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/unc0ver%E7%89%88%E6%9C%AC%E9%80%89%E6%8B%A9%E4%BF%A1%E6%81%AF.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/Cydia%E6%B7%BB%E5%8A%A0frida%E6%BA%90.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/frida%E5%AE%89%E8%A3%85.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/ssh%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/ssh%E7%99%BB%E5%BD%95%E5%B9%B6%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/frida%E9%AA%8C%E8%AF%81%E6%83%85%E5%86%B5.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E4%BD%BF%E7%94%A8frida-hook%E4%BC%9A%E8%A2%AB%E6%A3%80%E6%B5%8B%E5%88%B0.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/hook_libsystem_c%E5%BA%93.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/frida_hook_%E7%B3%BB%E7%BB%9Foc%E5%BA%93.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E5%87%BD%E6%95%B0%E6%9B%BF%E6%8D%A2%E5%BD%A2%E5%BC%8FHook.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E5%9F%BA%E4%BA%8E%E4%BA%8B%E4%BB%B6%E9%80%9A%E7%9F%A5%E7%9A%84hook%E5%BD%A2%E5%BC%8F.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C1.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C2.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/implementation%E5%AE%9E%E7%8E%B0%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/attach%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E5%A4%B4%E9%83%A8%E6%8C%87%E4%BB%A4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B%E4%BB%A3%E7%A0%81.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/attach%E5%AE%9E%E7%8E%B0%E5%85%B6%E5%AE%9E%E6%98%AFinline_hook.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/attach%E5%AE%9E%E7%8E%B0%E5%85%B6%E5%AE%9E%E6%98%AFinline_hook2.png">
+<meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/Implement%E5%AE%9E%E7%8E%B0%E6%98%AF%E6%9B%BF%E6%8D%A2IMP%E6%8C%87%E9%92%88.png">
+<meta property="article:published_time" content="2021-12-22T09:43:00.000Z">
+<meta property="article:modified_time" content="2021-12-22T09:48:21.558Z">
+<meta property="article:author" content="yougar">
+<meta property="article:tag" content="渗透测试">
+<meta property="article:tag" content="逆向">
+<meta property="article:tag" content="IOS安全">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://yougar0.github.io/images/ios_pentest_0_1/%E4%B8%80%E9%94%AE%E8%B6%8A%E7%8B%B1.png">
+  
+  <title>IOS端渗透测试从0到1 - go hacking</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/ir-black.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yougar0.github.io","root":"/","version":"1.8.12","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname"}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Go Hacking</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="IOS端渗透测试从0到1">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-12-22 17:43" pubdate>
+        2021年12月22日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.1k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      7 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">IOS端渗透测试从0到1</h1>
+            
+            <div class="markdown-body">
+              <p>这篇文章记录下此次APP渗透测试过程，包括从0搭建渗透测试环境，程序hook检测绕过，绕过原理。</p>
+<h2 id="渗透测试环境搭建"><a href="#渗透测试环境搭建" class="headerlink" title="渗透测试环境搭建"></a>渗透测试环境搭建</h2><h3 id="越狱"><a href="#越狱" class="headerlink" title="越狱"></a>越狱</h3><h4 id="工具环境"><a href="#工具环境" class="headerlink" title="工具环境"></a>工具环境</h4><ul>
+<li><p>IPhone 7，固件版本为12.4.1</p>
+</li>
+<li><p>爱思助手7.0官方最新版本</p>
+</li>
+</ul>
+<h4 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h4><p>在进行越狱前，请先确保设备上的重要数据已经备份，比如通讯录等，因为越狱过程无法保证不出现问题，而一旦出现意外设备上的重要数据可能会丢失。</p>
+<p>首先连接手机到PC电脑，在手机上弹出的允许设备访问中选择允许访问。</p>
+<p>第二步，在爱思助手中选择一键越狱工具。工具箱–&gt;一键越狱。</p>
+<p><img src="/images/ios_pentest_0_1/%E4%B8%80%E9%94%AE%E8%B6%8A%E7%8B%B1.png" srcset="/img/loading.gif" lazyload alt="工具箱--&gt;一键越狱"></p>
+<p><img src="/images/ios_pentest_0_1/%E8%B6%8A%E7%8B%B1%E5%B7%A5%E5%85%B7%E9%80%89%E9%A1%B9.png" srcset="/img/loading.gif" lazyload alt="越狱工具选项"></p>
+<p>第三步，根据设备的固件版本选择越狱工具，推荐使用第一种越狱方法（unc0ver），笔者在测试过程当中就是用的这种方法，其余两种方法在测试过程中都没有成功，可能跟固件版本有关。</p>
+<p>第四步，选择越狱方法，点击开始越狱按钮进行越狱工具安装，这一过程会自动在iphone设备上安装unc0ver app。由于app的设备证书是自签名证书，所以在app安装完成后需要在设备管理当中信任该证书才能继续后面的操作。</p>
+<p><img src="/images/ios_pentest_0_1/%E5%BC%80%E5%A7%8B%E8%B6%8A%E7%8B%B1.png" srcset="/img/loading.gif" lazyload alt="开始越狱"></p>
+<p>第五步，app安装完成并信任证书后，进入app页面，点击JailBreak进行越狱（这里由于笔者是已经越狱的设备，所以这里显示是Re-JailBreak）。正常越狱的过程应该是很顺滑的，如果在越狱过程当中出现越狱失败的提示，可以在爱思助手上选择安装不同版本的unc0ver app进行尝试，笔者在测试过程当中，最新版本无法完成设备的越狱，选择低版本的app后，越狱成功。</p>
+<p><img src="/images/ios_pentest_0_1/%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F.png" srcset="/img/loading.gif" lazyload alt="安装成功"></p>
+<p><img src="/images/ios_pentest_0_1/unc0ver%E7%89%88%E6%9C%AC%E9%80%89%E6%8B%A9%E4%BF%A1%E6%81%AF.png" srcset="/img/loading.gif" lazyload alt="unc0ver版本选择信息"></p>
+<p>第六步，越狱成功后，设备中会出现Cydia这个应用程序。通过Cydia可以安装第三方的app，这里笔者先安装最新版的frida server端到设备上。在cydia中添加frida源 <a target="_blank" rel="noopener" href="https://build.frida.re,点击添加源进行添加./">https://build.frida.re，点击添加源进行添加。</a></p>
+<p><img src="/images/ios_pentest_0_1/Cydia%E6%B7%BB%E5%8A%A0frida%E6%BA%90.png" srcset="/img/loading.gif" lazyload alt="Cydia添加frida源"></p>
+<p>添加完成后，在软件页面搜索frida进行安装。</p>
+<p><img src="/images/ios_pentest_0_1/frida%E5%AE%89%E8%A3%85.png" srcset="/img/loading.gif" lazyload alt="frida安装"></p>
+<p>第七步，为了方便以后对iphone设备的管理过程，笔者通过Cydia安装了OpenSSH，安装完成后，会自动启动，并且可通过root/mobile和默认密码alpine登录。注意，安装完成后，修改root用户和mobile用户的默认密码。</p>
+<p><img src="/images/ios_pentest_0_1/ssh%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C.png" srcset="/img/loading.gif" lazyload alt="ssh搜索结果"></p>
+<p><img src="/images/ios_pentest_0_1/ssh%E7%99%BB%E5%BD%95%E5%B9%B6%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81.png" srcset="/img/loading.gif" lazyload alt="ssh登录并修改密码"></p>
+<p>第八步，验证Frida安装情况。frida安装完成后，会自动启动。验证是否安装成功，在命令行输入frida-ps -U，查看进程输出信息。</p>
+<p><img src="/images/ios_pentest_0_1/frida%E9%AA%8C%E8%AF%81%E6%83%85%E5%86%B5.png" srcset="/img/loading.gif" lazyload alt="frida验证情况"></p>
+<p>出现上图类似的信息，证明安装成功，可以进行hook操作了。</p>
+<h2 id="实战APP流量解密"><a href="#实战APP流量解密" class="headerlink" title="实战APP流量解密"></a>实战APP流量解密</h2><p>笔者这次需要测试的APP为一款采用了mpaas sdk加密的应用。在github搜索了相关的解密工具之后，笔者发现一款<a target="_blank" rel="noopener" href="https://github.com/cnmsec/MpaasPentestTool">MpaasPentestTool</a>，正好满足笔者需求（便捷的查看和修改请求包、返回包）。然而，当笔者使用该工具注入app进程后，进程会一段时间后结束运行退出。在经过一番实验之后，笔者确定app在检测到自身OC代码被hook之后，将会自动退出。</p>
+<p><img src="/images/ios_pentest_0_1/%E4%BD%BF%E7%94%A8frida-hook%E4%BC%9A%E8%A2%AB%E6%A3%80%E6%B5%8B%E5%88%B0.png" srcset="/img/loading.gif" lazyload alt="使用frida-hook会被检测到"></p>
+<p>请注意笔者这里的描述，是检测到自身OC代码被hook。这是因为笔者在尝试hook native库和系统OC库之后，程序并没有检测到，也没有退出。</p>
+<p><img src="/images/ios_pentest_0_1/hook_libsystem_c%E5%BA%93.png" srcset="/img/loading.gif" lazyload alt="hook_libsystem_c库"></p>
+<p><img src="/images/ios_pentest_0_1/frida_hook_%E7%B3%BB%E7%BB%9Foc%E5%BA%93.png" srcset="/img/loading.gif" lazyload alt="frida_hook_系统oc库"></p>
+<p>此时笔者大胆猜测，该APP只会检测自身OC代码是否被hook，自身native代码的检测情况这里先不管，因为跑MpaasPentestTool这个工具仅仅需要我们hook OC代码即可。接下来就是想尽办法进行绕过检测了，由于笔者IOS逆向水平处于入门水平，没有用IDA去看脱壳后的程序，分析哪里对frida hook进行了检测，这里笔者从frida hook代码编写上入手，看看能否从hook的地方绕过。</p>
+<p>在google搜索和仔细查看了Frida官方的API文档后，笔者发现对OC代码进行hook有两者方式可以实现，一种是MpaasPentestTool采用的基于事件的方式，另一种是对函数直接进行替换。</p>
+<p><img src="/images/ios_pentest_0_1/%E5%87%BD%E6%95%B0%E6%9B%BF%E6%8D%A2%E5%BD%A2%E5%BC%8FHook.png" srcset="/img/loading.gif" lazyload alt="函数替换形式Hook"></p>
+<p><img src="/images/ios_pentest_0_1/%E5%9F%BA%E4%BA%8E%E4%BA%8B%E4%BB%B6%E9%80%9A%E7%9F%A5%E7%9A%84hook%E5%BD%A2%E5%BC%8F.png" srcset="/img/loading.gif" lazyload alt="基于事件通知的hook形式"></p>
+<p>在发现另一种hook方式之后，笔者将MpaasPentestTool原本的hook方式改为对函数直接进行替换的方式。结果出乎意料的是，竟然直接绕过了app对hook的检测。最终实现了MpaasPentestTool作者给出的效果。</p>
+<p><img src="/images/ios_pentest_0_1/%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C1.png" srcset="/img/loading.gif" lazyload alt="最终效果1"></p>
+<p><img src="/images/ios_pentest_0_1/%E6%9C%80%E7%BB%88%E6%95%88%E6%9E%9C2.png" srcset="/img/loading.gif" lazyload alt="最终效果2"></p>
+<h2 id="绕过原理分析"><a href="#绕过原理分析" class="headerlink" title="绕过原理分析"></a>绕过原理分析</h2><p>app检测frida hook的原理其实是从Hook技术本身出发，检测hook的特征。通过Google学习，笔者了解到OC存在三种HOOK方式，分别是objc_msgSend、inline hook、imp替换hook。笔者分别查看这两种方式Hook前后，imp指针和函数头部指令的变化，确定这两种方式分别是哪种hook技术。</p>
+<p><img src="/images/ios_pentest_0_1/implementation%E5%AE%9E%E7%8E%B0%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90.png" srcset="/img/loading.gif" lazyload alt="implementation实现技术分析"></p>
+<p><img src="/images/ios_pentest_0_1/attach%E5%AE%9E%E7%8E%B0%E5%88%86%E6%9E%90.png" srcset="/img/loading.gif" lazyload alt="attach实现分析"></p>
+<p><img src="/images/ios_pentest_0_1/%E5%A4%B4%E9%83%A8%E6%8C%87%E4%BB%A4%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B%E4%BB%A3%E7%A0%81.png" srcset="/img/loading.gif" lazyload alt="头部指令详细信息查看代码"></p>
+<p>分别进行注入，查看输出，最后一窥究竟。</p>
+<p>Attach实现方式其实是Inline Hook。</p>
+<p><img src="/images/ios_pentest_0_1/attach%E5%AE%9E%E7%8E%B0%E5%85%B6%E5%AE%9E%E6%98%AFinline_hook.png" srcset="/img/loading.gif" lazyload alt="attach实现其实是inline_hook"></p>
+<p><img src="/images/ios_pentest_0_1/attach%E5%AE%9E%E7%8E%B0%E5%85%B6%E5%AE%9E%E6%98%AFinline_hook2.png" srcset="/img/loading.gif" lazyload alt="attach实现其实是inline_hook2"></p>
+<p>Implement实现方式是替换IMP指针。</p>
+<p><img src="/images/ios_pentest_0_1/Implement%E5%AE%9E%E7%8E%B0%E6%98%AF%E6%9B%BF%E6%8D%A2IMP%E6%8C%87%E9%92%88.png" srcset="/img/loading.gif" lazyload alt="Implement实现是替换IMP指针"></p>
+<p>通过分析Hook技术的实现不同，可以大胆猜测，app检测自身是否被hook采用了检测imp指针指向函数的头部指令是否是ldr + br跳转，如果是则认为自身代码被hook，那么将会直接退出程序自身。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/167924620">为什么使用汇编可以 Hook objc_msgSend（下）- 实现与分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/130680057">为什么使用汇编可以 Hook objc_msgSend（上）- 汇编基础</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/yiyaaixuexi/article/details/9374411">Objective-C的hook方案（一）: Method Swizzling</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/HugJun/p/14735373.html">iOS hook</a></li>
+</ul>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/">渗透测试</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E9%80%86%E5%90%91/">逆向</a>
+                    
+                      <a class="hover-with-bg" href="/tags/IOS%E5%AE%89%E5%85%A8/">IOS安全</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/12/03/Hell-s-Gate%E6%8A%80%E6%9C%AF/">
+                        <span class="hidden-mobile">Hell's Gate技术</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js" ></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"default"});
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
