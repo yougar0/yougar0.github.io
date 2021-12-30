@@ -47,7 +47,7 @@
 <meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/attach%E5%AE%9E%E7%8E%B0%E5%85%B6%E5%AE%9E%E6%98%AFinline_hook2.png">
 <meta property="og:image" content="http://yougar0.github.io/images/ios_pentest_0_1/Implement%E5%AE%9E%E7%8E%B0%E6%98%AF%E6%9B%BF%E6%8D%A2IMP%E6%8C%87%E9%92%88.png">
 <meta property="article:published_time" content="2021-12-22T09:43:00.000Z">
-<meta property="article:modified_time" content="2021-12-22T09:48:21.558Z">
+<meta property="article:modified_time" content="2021-12-28T08:19:11.928Z">
 <meta property="article:author" content="yougar">
 <meta property="article:tag" content="渗透测试">
 <meta property="article:tag" content="逆向">
@@ -266,7 +266,7 @@
 <p><img src="/images/ios_pentest_0_1/ssh%E7%99%BB%E5%BD%95%E5%B9%B6%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81.png" srcset="/img/loading.gif" lazyload alt="ssh登录并修改密码"></p>
 <p>第八步，验证Frida安装情况。frida安装完成后，会自动启动。验证是否安装成功，在命令行输入frida-ps -U，查看进程输出信息。</p>
 <p><img src="/images/ios_pentest_0_1/frida%E9%AA%8C%E8%AF%81%E6%83%85%E5%86%B5.png" srcset="/img/loading.gif" lazyload alt="frida验证情况"></p>
-<p>出现上图类似的信息，证明安装成功，可以进行hook操作了。</p>
+<p>出现上图类似的信息，证明安装成功，可以进行hook操作了。注意，越狱设备重启之后，需要再进行越狱操作才能启动cydia，这是cydia的bug。</p>
 <h2 id="实战APP流量解密"><a href="#实战APP流量解密" class="headerlink" title="实战APP流量解密"></a>实战APP流量解密</h2><p>笔者这次需要测试的APP为一款采用了mpaas sdk加密的应用。在github搜索了相关的解密工具之后，笔者发现一款<a target="_blank" rel="noopener" href="https://github.com/cnmsec/MpaasPentestTool">MpaasPentestTool</a>，正好满足笔者需求（便捷的查看和修改请求包、返回包）。然而，当笔者使用该工具注入app进程后，进程会一段时间后结束运行退出。在经过一番实验之后，笔者确定app在检测到自身OC代码被hook之后，将会自动退出。</p>
 <p><img src="/images/ios_pentest_0_1/%E4%BD%BF%E7%94%A8frida-hook%E4%BC%9A%E8%A2%AB%E6%A3%80%E6%B5%8B%E5%88%B0.png" srcset="/img/loading.gif" lazyload alt="使用frida-hook会被检测到"></p>
 <p>请注意笔者这里的描述，是检测到自身OC代码被hook。这是因为笔者在尝试hook native库和系统OC库之后，程序并没有检测到，也没有退出。</p>
@@ -326,6 +326,12 @@
                 <div class="post-prevnext">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2021/12/30/JSP%E5%85%8D%E6%9D%80%E7%BB%95%E8%BF%87%E6%B5%8B%E8%AF%95%E8%AE%B0%E5%BD%95/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">JSP免杀绕过测试记录</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">

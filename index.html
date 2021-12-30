@@ -166,6 +166,60 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
+        <a href="/2021/12/30/JSP%E5%85%8D%E6%9D%80%E7%BB%95%E8%BF%87%E6%B5%8B%E8%AF%95%E8%AE%B0%E5%BD%95/" target="_self">
+          JSP免杀绕过测试记录
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/12/30/JSP%E5%85%8D%E6%9D%80%E7%BB%95%E8%BF%87%E6%B5%8B%E8%AF%95%E8%AE%B0%E5%BD%95/" target="_self">
+          
+          
+            
+          
+          测试环境
+windows server 2008
+杀软：360、火绒、某藤
+jsp运行环境：java11、tomcat 10
+payload编译环境：java8
+
+过程记录首先将冰蝎默认的木马经过一定的完善，360扫描没有提示jsp后门，火绒扫描提示存在后门。备注：这里笔者强烈怀疑360杀毒检测到在虚拟机中运行就不正常干活了，故意迷惑病毒后门测试人员。
+
+当前jsp shell代码：
+123456
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-12-30 19:45" pubdate>
+              2021-12-30
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%85%8D%E6%9D%80/">免杀</a>
+            
+              <a href="/tags/Webshell/">Webshell</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
         <a href="/2021/12/22/IOS%E7%AB%AF%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E4%BB%8E0%E5%88%B01/" target="_self">
           IOS端渗透测试从0到1
         </a>
@@ -598,58 +652,13 @@ dnspy
     </article>
   </div>
 
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2021/11/02/HTB-Writer%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95/" target="_self">
-          HTB-Writer通关记录
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/11/02/HTB-Writer%E9%80%9A%E5%85%B3%E8%AE%B0%E5%BD%95/" target="_self">
-          
-          
-            
-          
-          信息收集1sudo nmap -sC -sV writer.htb
-
-爆破目录信息
-1gobuster dir  -u http://writer.htb/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
 
 
-获得一个/administrative目录，访问该目录
-
-输入admin/admin进行登录，xray报una
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-11-02 10:59" pubdate>
-              2021-11-02
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/HTB/">HTB</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-
+  <nav aria-label="navigation">
+    <span class="pagination" id="pagination">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
+    </span>
+  </nav>
 
 
 
